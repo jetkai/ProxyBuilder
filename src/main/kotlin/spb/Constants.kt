@@ -2,11 +2,16 @@ package spb
 
 import java.io.File
 
+/**
+ * @author Kai
+ */
 object Constants {
+
+    const val THREADS = 12 // TEST THREADS LIMIT
 
     const val IS_USING_PROXY = true
 
-    const val SECRET_PATH = "C:\\Users\\Kai\\IntelliJProjects\\secrets"
+    private const val SECRET_PATH = "C:\\Users\\Kai\\IntelliJProjects\\secrets"
 
     //RSPS IP TO TEST WITH
     val VICTIM_TEST_SERVER_IP = File("$SECRET_PATH\\VICTIM_TEST_SERVER_IP").readText() //EX - 127.0.0.1

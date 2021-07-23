@@ -1,5 +1,8 @@
 package spb.net.rs.node
 
+/**
+ * @author Kai
+ */
 class NodeList {
 
     private val head : Node = Node()

@@ -5,6 +5,9 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.net.Socket
 
+/**
+ * @author Kai
+ */
 class ClientSocket : Runnable {
 
     private var socket : Socket? = null
@@ -27,7 +30,7 @@ class ClientSocket : Runnable {
 
         socket = initSocket
 
-        socket!!.soTimeout = 8000
+        socket!!.soTimeout = 5000
         socket!!.tcpNoDelay = true
 
         inputStream = socket!!.getInputStream()
@@ -93,9 +96,8 @@ class ClientSocket : Runnable {
         thread.priority = priority
     }
 
-    @Throws(IOException::class)
-    fun read(): Int {
-        return if (closed) 0 else inputStream!!.read()
+    fun read(): Int? {
+        return if (closed) 0 else inputStream?.read()
     }
 
     fun close() {

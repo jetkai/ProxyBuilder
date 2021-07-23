@@ -1,8 +1,10 @@
 package spb
 
 import spb.net.proxy.ProxyGrabber
-import spb.net.proxy.ProxyTester
 
+/**
+ * @author Kai
+ */
 object Main {
 
     @JvmStatic

@@ -1,5 +1,8 @@
 package spb.net.rs.node
 
+/**
+ * @author Kai
+ */
 open class Node {
 
     var prev : Node? = null
@@ -13,4 +16,5 @@ open class Node {
             next = null
         }
     }
+
 }

@@ -2,6 +2,9 @@ package spb.net.rs
 
 import spb.net.rs.node.NodeList
 
+/**
+ * @author Kai
+ */
 class Stream {
 
     var buffer : ByteArray = ByteArray(0)
@@ -34,6 +37,5 @@ class Stream {
     fun writeByte(i : Int) {
         buffer[this.offset++] = i.toByte()
     }
-
 
 }
