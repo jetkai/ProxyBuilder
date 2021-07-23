@@ -1,0 +1,9 @@
+#exclude folder contents
+
+.idea/*
+.gradle
+build/classes/*
+build/kotlin/*
+build/tmp/*
+build/distributions/*
+build/scripts/*
