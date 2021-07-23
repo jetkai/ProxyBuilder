@@ -32,17 +32,12 @@ class ProxyGrabber {
             this.ignoreUnknownKeys = true
         }
 
-        val dataArray = data.decodeFromString<Array<ProxyData>>("[$requestedData]")
-        val dataMap = dataArray.associateBy { it }
-        val proxies = dataMap.keys.toMutableList()[0]
+        val proxies = data.decodeFromString<Array<ProxyInData>>("[$requestedData]").associateBy{ it }.keys.toMutableList()[0]
 
-        for(proxy in proxies.socks5) {
+        for(proxy in proxies.socks4)
+            validateProxy(proxy, true)
+        for(proxy in proxies.socks5)
             validateProxy(proxy, false)
-        }
-
-     /*   for(proxy in proxies.socks4) {
-            validateProxy(proxy, verifiedSocks4, false)
-        }*/
     }
 
     private fun validateProxy(proxy: String, socks4: Boolean) {
@@ -54,6 +49,7 @@ class ProxyGrabber {
         proxyTester.proxyAddress = splitProxy[0]
         proxyTester.proxyPort = Integer.parseInt(splitProxy[1])
         if(socks4) proxyTester.socks4 = true
+
         SPBExecutorService.scheduleAtFixedRate(proxyTester)
     }
 

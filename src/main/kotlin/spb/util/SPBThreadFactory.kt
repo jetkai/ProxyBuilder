@@ -9,6 +9,7 @@ class SPBThreadFactory (private val name : String) : ThreadFactory {
 
     private val threads: MutableList<Thread> = ArrayList()
 
+    //Creates a new thread
     override fun newThread(r: Runnable?): Thread {
         val t = Thread(r)
         threads.add(t)
@@ -20,12 +21,15 @@ class SPBThreadFactory (private val name : String) : ThreadFactory {
         return t
     }
 
+    //TODO - Using later
     fun interruptThread(thread : Thread) {
         thread.interrupt()
     }
 
-    fun getThreads(): List<Thread?> {
-        return threads
+    //TODO - After X amount of minutes, sometimes can be 100k+ new proxies, this can take forever
+    fun interruptAllThreads() {
+        for(thread in threads)
+            thread.interrupt()
     }
 
 }

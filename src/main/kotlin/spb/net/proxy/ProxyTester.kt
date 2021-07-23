@@ -12,7 +12,7 @@ import java.net.*
 /**
  * @author Kai
  */
-class ProxyTester : Event(5) { //Ping every 5 seconds
+class ProxyTester : Event(5) { //Run every 5 seconds
 
     var proxyAddress = ""   // "116.233.137.127" {SOCKS4-EXAMPLE}
     var proxyPort = -1      // 4145 {SOCKS4-EXAMPLE}
@@ -62,6 +62,7 @@ class ProxyTester : Event(5) { //Ping every 5 seconds
         for (inBytes in 0..7)
             clientSocket.read()
 
+        //Expecting 0, -1 = failed to connect
         val responseCode : Int? = clientSocket.read()
 
         clientSocket.close()
@@ -70,7 +71,6 @@ class ProxyTester : Event(5) { //Ping every 5 seconds
             connected()
         else
             println("Connected to Proxy successfully, but failed to connect to RSPS with Proxy $formattedProxy")
-       // println("Response Code: $responseCode")
     }
 
     /**
@@ -94,6 +94,9 @@ class ProxyTester : Event(5) { //Ping every 5 seconds
         return ClientSocket().init(socket)
     }
 
+    /**
+     * Requires JDK 1.8 {REFLECTION}
+     */
     private fun forceSocks4(socket : Socket) {
         val setSockVersion : Method
         val sockImplField : Field = socket.javaClass.getDeclaredField("impl")
