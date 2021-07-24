@@ -10,13 +10,23 @@ import java.util.concurrent.TimeUnit
  */
 class SPBExecutorService {
 
-    private val mainExecutor = Executors.newScheduledThreadPool(Constants.THREADS, SPBThreadFactory("MainExecutor"))
+    val proxyThreadFactory = SPBThreadFactory("ProxyExecutor")
 
-    fun scheduleAtFixedRate(event : Event) {
-        mainExecutor.scheduleAtFixedRate({
+    private val proxyExecutor = Executors.newFixedThreadPool(Constants.THREADS, proxyThreadFactory)
+    private val monitorExecutor = Executors.newSingleThreadScheduledExecutor(SPBThreadFactory("MonitorExecutor"))
+
+    fun schedule(event : Event) {
+        proxyExecutor.submit {
             if (event.isRunning)
                 event.run()
-        }, 0, event.delay.toLong(), TimeUnit.SECONDS)
+        }
+    }
+
+    fun scheduleAtFixedRate(event : Event) {
+        monitorExecutor.scheduleAtFixedRate( {
+            if (event.isRunning)
+                event.run()
+        }, 0, event.timeToExecute.toLong(), TimeUnit.MINUTES)
     }
 
 }

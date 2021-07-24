@@ -4,21 +4,27 @@ import spb.Constants
 import spb.event.Event
 import spb.net.rs.ClientSocket
 import spb.net.rs.Stream
+import spb.util.FileBuilder
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStream
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.net.*
+import java.nio.charset.StandardCharsets
 
 /**
  * @author Kai
  */
-class ProxyTester : Event(5) { //Run every 5 seconds
+class ProxyTester : Event(5) {
 
     var proxyAddress = ""   // "116.233.137.127" {SOCKS4-EXAMPLE}
     var proxyPort = -1      // 4145 {SOCKS4-EXAMPLE}
+    var type = ""
     var socks4 = false
 
-    private var formattedProxy = "$proxyAddress:$proxyPort"
+    private var formattedProxy = ""
     private var connected = false
     private var started = false
     private var count = 0
@@ -30,6 +36,7 @@ class ProxyTester : Event(5) { //Run every 5 seconds
     }
 
     private fun init() {
+        formattedProxy = "$proxyAddress:$proxyPort"
         if(proxyAddress.isNotEmpty() && proxyPort > 0)
             connectRS()
         else
@@ -42,12 +49,13 @@ class ProxyTester : Event(5) { //Run every 5 seconds
      * Returns responseCode 0 if successful, -1 if unsuccessful
      */
     private fun connectRS() {
-        val clientSocket = when {
-            Constants.IS_USING_PROXY -> useProxy(Constants.VICTIM_TEST_SERVER_IP, Constants.VICTIM_TEST_SERVER_PORT)
-            else -> ClientSocket().init(
-                Socket(InetAddress.getByName(Constants.VICTIM_TEST_SERVER_IP), Constants.VICTIM_TEST_SERVER_PORT)
-            )
-        }
+        val clientSocket = if (Constants.IS_USING_PROXY && type.contains("socks"))
+            useSocksProxy(Constants.VICTIM_TEST_SERVER_IP, Constants.VICTIM_TEST_SERVER_PORT)
+        else if(Constants.IS_USING_PROXY && type.contains("http"))
+            useHttpProxy(Constants.VICTIM_TEST_SERVER_IP, Constants.VICTIM_TEST_SERVER_PORT)
+        else ClientSocket().init(
+            Socket(InetAddress.getByName(Constants.VICTIM_TEST_SERVER_IP), Constants.VICTIM_TEST_SERVER_PORT)
+        )
         if(clientSocket == null) {
             println("Failed to connect to Proxy $formattedProxy")
             return
@@ -76,8 +84,8 @@ class ProxyTester : Event(5) { //Run every 5 seconds
     /**
      *
      */
-    private fun useProxy(serverAddress: String?, serverPort: Int): ClientSocket? {
-
+    private fun useSocksProxy(serverAddress: String?, serverPort: Int): ClientSocket? {
+        println("::usingSocksProxy::")
         val proxy = Proxy(Proxy.Type.SOCKS, InetSocketAddress(proxyAddress, proxyPort))
         val socket = Socket(proxy)
         if(socks4)
@@ -87,6 +95,29 @@ class ProxyTester : Event(5) { //Run every 5 seconds
             socket.tcpNoDelay = true
             socket.connect(InetSocketAddress(serverAddress, serverPort))
         } catch (e : IOException) {
+            socket.close()
+        }
+        if(socket.isClosed)
+            return null
+        return ClientSocket().init(socket)
+    }
+
+    private fun useHttpProxy(serverAddress: String?, serverPort: Int): ClientSocket? {
+        println("::usingHttpProxy::")
+        val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(proxyAddress, proxyPort))
+        val iNet : SocketAddress = proxy.address()
+        val iNet2 = iNet as InetSocketAddress
+        val socket = Socket(iNet2.hostName, iNet2.port)
+        try {
+            socket.soTimeout = 10000
+            val outStream: OutputStream = socket.getOutputStream()
+            outStream.write(("CONNECT $serverAddress:$serverPort HTTP/1.0\n\n").byteInputStream(StandardCharsets.ISO_8859_1).readBytes())
+            outStream.flush()
+            val inStream = BufferedReader(InputStreamReader(socket.getInputStream()))
+            val httpConLine = inStream.readLine()
+            println(httpConLine)
+        } catch (e : IOException) {
+            println(e.message)
             socket.close()
         }
         if(socket.isClosed)
@@ -111,12 +142,10 @@ class ProxyTester : Event(5) { //Run every 5 seconds
     }
 
     private fun connected() {
-        if(socks4)
-            ProxyGrabber.verifiedSocks4 += (formattedProxy)
-        else
-            ProxyGrabber.verifiedSocks5 += (formattedProxy)
         this.connected = true
         this.isRunning = false
+        FileBuilder.appendTxtFiles(formattedProxy, type)
+        FileBuilder.appendJsonFiles(formattedProxy, type)
         println("Successfully connected to an RSPS with the Proxy $formattedProxy")
     }
 

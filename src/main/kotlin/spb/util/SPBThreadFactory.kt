@@ -13,6 +13,7 @@ class SPBThreadFactory (private val name : String) : ThreadFactory {
     override fun newThread(r: Runnable?): Thread {
         val t = Thread(r)
         threads.add(t)
+        println("Total Threads:"+threads.size)
         t.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _: Thread?, _: Throwable? ->
             println(
                 "[ALERT] ONE OF THE PROXY THREADS HAVE CRASHED"
