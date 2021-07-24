@@ -97,8 +97,8 @@ object FileBuilder { //TESTING
             return
         val readmeText = readmeFile.readText()
 
-        val originalText = readmeText.substring(0, readmeText.indexOf("## [SAMPLE PROXIES]"))
-        var newText = "## [SAMPLE PROXIES] - ${SimpleDateFormat("[MMMM dd yyyy | hh:mm:ss]").format(Date())}\n\n"
+        val originalText = readmeText.substring(0, readmeText.indexOf("# [SAMPLE PROXIES]"))
+        var newText = "# [SAMPLE PROXIES] - ${SimpleDateFormat("[MMMM dd yyyy | hh:mm:ss]").format(Date())}\n\n"
 
         val codeTextArray = arrayListOf(
             arrayListOf("SOCKS4", socks4File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
@@ -112,7 +112,7 @@ object FileBuilder { //TESTING
                 .plus("```yaml")
                 .plus("\n")
                 .plus(codeText[1])
-                .plus("```\n\n"
+                .plus("\n```\n\n"
                 )
             )
         }
