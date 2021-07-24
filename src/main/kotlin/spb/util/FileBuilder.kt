@@ -89,15 +89,34 @@ object FileBuilder { //TESTING
 
     fun updateReadme() {
         val readmeFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\README.md")
-        val proxiesFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-beautify.json")
-        if(!readmeFile.exists() || !proxiesFile.exists())
+        val socks4File = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks4.txt")
+        val socks5File = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks5.txt")
+        val httpFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-http.txt")
+        val httpsFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-https.txt")
+        if(!readmeFile.exists() || !socks4File.exists() || !socks5File.exists() || !httpFile.exists() || !httpsFile.exists())
             return
         val readmeText = readmeFile.readText()
 
-        val originalText = readmeText.substring(0, readmeText.indexOf("## [TESTED PROXIES]"))
-        val newText = "## [TESTED PROXIES] - ${SimpleDateFormat("[MMMM dd yyyy | hh:mm:ss]").format(Date())}\n\n```yaml".plus(proxiesFile.readText()).plus("```\n\n").plus("Thx Co Pure Gs - Sort miester! \uD83D\uDC9F")
+        val originalText = readmeText.substring(0, readmeText.indexOf("## [SAMPLE PROXIES]"))
+        var newText = "## [SAMPLE PROXIES] - ${SimpleDateFormat("[MMMM dd yyyy | hh:mm:ss]").format(Date())}\n\n"
 
-        readmeFile.writeText(originalText.plus(newText))
+        val codeTextArray = arrayListOf(
+            arrayListOf("SOCKS4", socks4File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
+            arrayListOf("SOCKS5", socks5File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
+            arrayListOf("HTTP", httpFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
+            arrayListOf("HTTPS", httpsFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")})
+        )
+        for(codeText in codeTextArray) {
+           newText += ("## ${codeText[0]}"
+                .plus("\n")
+                .plus("```yaml")
+                .plus("\n")
+                .plus(codeText[1])
+                .plus("```\n\n"
+                )
+            )
+        }
+        readmeFile.writeText(originalText.plus(newText).plus("\n\nThx Co Pure Gs - Sort miester! \uD83D\uDC9F"))
     }
 
 
