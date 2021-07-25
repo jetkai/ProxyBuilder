@@ -1,2 +1,2 @@
 # SocksProxyBuilder
- Socks 4 + 5 ProxyList Builder for GitHub
+//TODO THIS README - Added today
