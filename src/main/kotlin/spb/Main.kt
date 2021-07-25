@@ -8,7 +8,7 @@ import spb.util.SPBExecutorService
  */
 object Main {
 
-    val SPBExecutorService = SPBExecutorService()
+    val SPBExecutorService = SPBExecutorService() //TODO CHANGE THIS (TEMP)
 
     @JvmStatic
     fun main(args : Array<String>) {
@@ -17,7 +17,7 @@ object Main {
 
     private fun init() {
         Constants.STAGE = "STARTING"
-        SPBExecutorService.scheduleAtFixedRate(MonitorEvent())
+        SPBExecutorService.scheduleAtFixedRate(MonitorEvent()) //TODO CHANGE THIS (TEMP)
     }
 
 }

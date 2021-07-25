@@ -18,6 +18,7 @@ class ProxyGrabber {
     }
 
     private fun request() {
+        val gitHubData = URL(Constants.PROXY_ENDPOINT_GITHUB_URL).readText()
         val requestedData = URL(Constants.PROXY_ENDPOINT_URL).readText()
 
         val data = Json {
@@ -27,19 +28,14 @@ class ProxyGrabber {
         }
 
         Constants.STAGE = "GRABBING_PROXIES"
-
+        val gitHubProxies = data.decodeFromString<Array<ProxyInData>>("[$gitHubData]").associateBy{ it }.keys.toMutableList()[0]
         val proxies = data.decodeFromString<Array<ProxyInData>>("[$requestedData]").associateBy{ it }.keys.toMutableList()[0]
 
-        for(proxy in filterProxies(proxies.socks4))
-            validateProxy(proxy, "socks4")
-        for(proxy in filterProxies(proxies.socks5))
-            validateProxy(proxy, "socks5")
-         for(proxy in filterProxies(proxies.http))
-            validateProxy(proxy, "http")
-        for(proxy in filterProxies(proxies.https))
-            validateProxy(proxy, "https")
+        filterProxies(proxies.socks4.plus(gitHubProxies.socks4)).forEach { proxy -> validateProxy(proxy, "socks4") }
+        filterProxies(proxies.socks5.plus(gitHubProxies.socks5)).forEach { proxy -> validateProxy(proxy, "socks5") }
+        filterProxies(proxies.http.plus(gitHubProxies.http)).forEach { proxy -> validateProxy(proxy, "http") }
+        filterProxies(proxies.https.plus(gitHubProxies.https)).forEach { proxy -> validateProxy(proxy, "https") }
 
-      //  validateProxy("173.212.220.96:3128", false)
     }
 
     private fun filterProxies(proxyArray : Array<String>): Array<String> {
@@ -58,7 +54,7 @@ class ProxyGrabber {
         if(type == "socks4")
             proxyTester.socks4 = true
 
-        Main.SPBExecutorService.schedule(proxyTester)
+        Main.SPBExecutorService.schedule(proxyTester) //TODO CHANGE THIS LATER
     }
 
 }

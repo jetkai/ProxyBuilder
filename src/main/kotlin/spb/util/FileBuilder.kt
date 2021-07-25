@@ -10,12 +10,12 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-object FileBuilder { //TESTING
+object FileBuilder { //TODO - Complete rewrite this entire object file, re-write into class, clean-up & optimize
 
-    private val socks4Array = arrayListOf<String>(/*"123.123.123.123:8080", "444.111.444.111:0992", "127.0.0.1:80"*/)
-    private val socks5Array = arrayListOf<String>(/*"123.123.123.123:8080", "444.111.444.111:0992", "127.0.0.1:80"*/)
-    private val httpArray = arrayListOf<String>(/*"123.123.123.123:8080", "444.111.444.111:0992", "127.0.0.1:80"*/)
-    private val httpsArray = arrayListOf<String>(/*"123.123.123.123:8080", "444.111.444.111:0992", "127.0.0.1:80"*/)
+    private val socks4Array = arrayListOf<String>()
+    private val socks5Array = arrayListOf<String>()
+    private val httpArray = arrayListOf<String>()
+    private val httpsArray = arrayListOf<String>()
 
     private val fileArray = arrayListOf("proxies-socks4.txt", "proxies-socks5.txt", "proxies-socks4+5.txt",
         "proxies-http.txt", "proxies-https.txt", "proxies-http+https.txt", "proxies.txt",
@@ -27,19 +27,13 @@ object FileBuilder { //TESTING
     }
 
     fun appendTxtFiles(proxy : String, type : String) { //TESTING {FOR TESTING}
-        if(type == "socks4")
-            File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks4.txt").appendText("$proxy\n")
-        if(type == "socks5")
-            File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks5.txt").appendText("$proxy\n")
-        if(type.contains("socks"))
-            File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks4+5.txt").appendText("$proxy\n")
+        if(type == "socks4") File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks4.txt").appendText("$proxy\n")
+        if(type == "socks5") File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks5.txt").appendText("$proxy\n")
+        if(type.contains("socks")) File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks4+5.txt").appendText("$proxy\n")
 
-        if(type == "http")
-            File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-http.txt").appendText("$proxy\n")
-        if(type == "https")
-            File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-https.txt").appendText("$proxy\n")
-        if(type.contains("http"))
-            File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-http+https.txt").appendText("$proxy\n")
+        if(type == "http") File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-http.txt").appendText("$proxy\n")
+        if(type == "https") File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-https.txt").appendText("$proxy\n")
+        if(type.contains("http")) File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-http+https.txt").appendText("$proxy\n")
 
         //All Proxies
         File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies.txt").appendText("$proxy\n")
@@ -48,14 +42,10 @@ object FileBuilder { //TESTING
     //TODO - Some errors here, need to sleep
     fun appendJsonFiles(fProxy : String, type : String) { //TESTING
 
-        if(type == "socks4")
-            socks4Array += fProxy
-        if(type == "socks5")
-            socks5Array += fProxy
-        if(type == "http")
-            httpArray += fProxy
-        if(type == "https")
-            httpsArray += fProxy
+        if(type == "socks4") socks4Array += fProxy
+        if(type == "socks5") socks5Array += fProxy
+        if(type == "http") httpArray += fProxy
+        if(type == "https") httpsArray += fProxy
 
         val rawJson = Json
         val prettyJson = Json { prettyPrint = true; encodeDefaults = true }
@@ -93,19 +83,28 @@ object FileBuilder { //TESTING
         val socks5File = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-socks5.txt")
         val httpFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-http.txt")
         val httpsFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-https.txt")
-        if(!readmeFile.exists() || !socks4File.exists() || !socks5File.exists() || !httpFile.exists() || !httpsFile.exists())
+        val proxiesFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies.txt")
+        if(!readmeFile.exists() || !socks4File.exists() || !socks5File.exists()
+            || !httpFile.exists() || !httpsFile.exists() || !proxiesFile.exists())
             return
+
         val readmeText = readmeFile.readText()
 
         val originalText = readmeText.substring(0, readmeText.indexOf("# [SAMPLE PROXIES]"))
         var newText = "# [SAMPLE PROXIES] - ${SimpleDateFormat("[MMMM dd yyyy | hh:mm:ss]").format(Date())}\n\n"
 
+        val totalProxiesCount = proxiesFile.readLines().size
         val codeTextArray = arrayListOf(
-            arrayListOf("SOCKS4", socks4File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("SOCKS5", socks5File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("HTTP", httpFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("HTTPS", httpsFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")})
+            arrayListOf("SOCKS4 (${socks4File.readLines().size}/$totalProxiesCount)",
+                socks4File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
+            arrayListOf("SOCKS5 (${socks5File.readLines().size}/$totalProxiesCount)",
+                socks5File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
+            arrayListOf("HTTP (${httpFile.readLines().size}/$totalProxiesCount)",
+                httpFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
+            arrayListOf("HTTPS (${httpsFile.readLines().size}/$totalProxiesCount)",
+                httpsFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")})
         )
+
         for(codeText in codeTextArray) {
            newText += ("## ${codeText[0]}"
                 .plus("\n")

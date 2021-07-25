@@ -27,15 +27,15 @@ class ProxyTester : Event(5) {
     private var formattedProxy = ""
     private var connected = false
     private var started = false
-    private var count = 0
+    private var attempt = 0
 
     override fun run() {
-        if(connected || count == 2) this.isRunning = false
+        if(connected || attempt == 2) this.isRunning = false
         if(!started) init()
-        count++
     }
 
     private fun init() {
+        attempt++
         formattedProxy = "$proxyAddress:$proxyPort"
         if(proxyAddress.isNotEmpty() && proxyPort > 0)
             connectRS()
@@ -49,12 +49,15 @@ class ProxyTester : Event(5) {
      * Returns responseCode 0 if successful, -1 if unsuccessful
      */
     private fun connectRS() {
+        val serverAddress = if(attempt > 1) Constants.VICTIM_BACKUP_SERVER_IP else Constants.VICTIM_TEST_SERVER_IP
+        val serverPort = if(attempt > 1) Constants.VICTIM_BACKUP_SERVER_PORT else Constants.VICTIM_TEST_SERVER_PORT
+
         val clientSocket = if (Constants.IS_USING_PROXY && type.contains("socks"))
-            useSocksProxy(Constants.VICTIM_TEST_SERVER_IP, Constants.VICTIM_TEST_SERVER_PORT)
+            useSocksProxy(serverAddress, serverPort)
         else if(Constants.IS_USING_PROXY && type.contains("http"))
-            useHttpProxy(Constants.VICTIM_TEST_SERVER_IP, Constants.VICTIM_TEST_SERVER_PORT)
+            useHttpProxy(serverAddress, serverPort)
         else ClientSocket().init(
-            Socket(InetAddress.getByName(Constants.VICTIM_TEST_SERVER_IP), Constants.VICTIM_TEST_SERVER_PORT)
+            Socket(InetAddress.getByName(serverAddress), serverPort)
         )
         if(clientSocket == null) {
             println("Failed to connect to Proxy $formattedProxy")
@@ -97,8 +100,11 @@ class ProxyTester : Event(5) {
         } catch (e : IOException) {
             socket.close()
         }
-        if(socket.isClosed)
+        if(socket.isClosed) {
+            if(attempt == 1)
+                init()
             return null
+        }
         return ClientSocket().init(socket)
     }
 
@@ -120,8 +126,11 @@ class ProxyTester : Event(5) {
             println(e.message)
             socket.close()
         }
-        if(socket.isClosed)
+        if(socket.isClosed) {
+            if(attempt == 1)
+                init()
             return null
+        }
         return ClientSocket().init(socket)
     }
 
