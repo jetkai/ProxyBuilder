@@ -84,6 +84,7 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
         val httpFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-http.txt")
         val httpsFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies-https.txt")
         val proxiesFile = File("${Constants.MY_SECRET_LOCAL_PATH}\\proxies.txt")
+
         if(!readmeFile.exists() || !socks4File.exists() || !socks5File.exists()
             || !httpFile.exists() || !httpsFile.exists() || !proxiesFile.exists())
             return
@@ -94,14 +95,15 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
         var newText = "# [SAMPLE PROXIES] - ${SimpleDateFormat("[MMMM dd yyyy | hh:mm:ss]").format(Date())}\n\n"
 
         val totalProxiesCount = proxiesFile.readLines().size
+        val gitHubLinkArray = Constants.PROXY_GITHUB_LIST.split("\r\n")
         val codeTextArray = arrayListOf(
-            arrayListOf("SOCKS4 (${socks4File.readLines().size}/$totalProxiesCount)",
+            arrayListOf("[SOCKS4 (${socks4File.readLines().size}/$totalProxiesCount)](${gitHubLinkArray[0]})",
                 socks4File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("SOCKS5 (${socks5File.readLines().size}/$totalProxiesCount)",
+            arrayListOf("[SOCKS5 (${socks5File.readLines().size}/$totalProxiesCount)](${gitHubLinkArray[1]})",
                 socks5File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("HTTP (${httpFile.readLines().size}/$totalProxiesCount)",
+            arrayListOf("[HTTP (${httpFile.readLines().size}/$totalProxiesCount)](${gitHubLinkArray[2]})",
                 httpFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("HTTPS (${httpsFile.readLines().size}/$totalProxiesCount)",
+            arrayListOf("[HTTPS (${httpsFile.readLines().size}/$totalProxiesCount)](${gitHubLinkArray[3]})",
                 httpsFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")})
         )
 

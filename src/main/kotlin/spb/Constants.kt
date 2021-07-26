@@ -28,5 +28,6 @@ object Constants {
 
     val PROXY_ENDPOINT_URL = File("$SECRET_PATH\\PROXY_ENDPOINT_URL").readText() //EX - https://your-proxy-api.com/proxies.json
     val PROXY_ENDPOINT_GITHUB_URL = File("$SECRET_PATH\\PROXY_ENDPOINT_GITHUB_URL").readText()
+    val PROXY_GITHUB_LIST = File("$SECRET_PATH\\PROXY_GITHUB_LIST").readText()
 
 }

@@ -80,8 +80,11 @@ class ProxyTester : Event(5) {
 
         if(responseCode == 0)
             connected()
-        else
+        else {
+            if(attempt == 1)
+                init() //Restarts for second attempt on secondary test server
             println("Connected to Proxy successfully, but failed to connect to RSPS with Proxy $formattedProxy")
+        }
     }
 
     /**
