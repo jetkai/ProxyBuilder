@@ -15,6 +15,7 @@ object Constants {
     const val EXIT_UPON_COMPLETION = true
     const val DEBUG_MODE = true
 
+    val IS_WINDOWS = System.getProperty("os.name").startsWith("Windows")
     val IS_PROXY_BUILDER_USER = System.getProperty("user.name").equals("proxybuilder")
 
 }

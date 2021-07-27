@@ -9,7 +9,7 @@ import spb.util.FileBuilder
 /**
  * @author Kai
  */
-class MonitorEvent : Event(20) { //20 minutes test
+class MonitorEvent : Event(2) { //20 minutes test
 
     override fun run() {
         if(Constants.STAGE != "GRABBING_PROXIES" && !Constants.STAGE.contains("GIT"))
