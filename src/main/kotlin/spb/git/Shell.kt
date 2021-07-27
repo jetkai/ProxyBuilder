@@ -20,7 +20,7 @@ class Shell { //TODO Change this, lot of test code that needs optimizing
             println(Runtime.getRuntime().exec(CMD.plus(DIRECTORY).plus(gitArguments)).inputStream.reader().readText())
         else
             println(Runtime.getRuntime().exec(
-                CMD.plus(DIRECTORY.joinToString { it }.replace("&&", "&") + gitArguments.joinToString { it }
+                CMD.plus(DIRECTORY.joinToString { it }.replace("&&", "&") + gitArguments.joinToString(" ") { it }
                 )).inputStream.reader().readText())
         Thread.sleep(10000)
     }
