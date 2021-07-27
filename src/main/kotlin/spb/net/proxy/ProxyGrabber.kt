@@ -4,6 +4,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import spb.Constants
 import spb.Main
+import spb.util.Config
 import spb.util.FileBuilder
 import java.net.URL
 
@@ -18,8 +19,8 @@ class ProxyGrabber {
     }
 
     private fun request() {
-        val gitHubData = URL(Constants.PROXY_ENDPOINT_GITHUB_URL).readText()
-        val requestedData = URL(Constants.PROXY_ENDPOINT_URL).readText()
+        val gitHubData = URL(Config.values?.proxyEndpointGithubUrl).readText()
+        val requestedData = URL(Config.values?.proxyEndpointUrl).readText()
 
         val data = Json {
             this.prettyPrint = true
@@ -49,7 +50,7 @@ class ProxyGrabber {
 
         val proxyTester = ProxyTester()
         proxyTester.proxyAddress = splitProxy[0]
-        proxyTester.proxyPort = Integer.parseInt(splitProxy[1])
+        proxyTester.proxyPort = splitProxy[1].toInt()
         proxyTester.type = type
         if(type == "socks4")
             proxyTester.socks4 = true

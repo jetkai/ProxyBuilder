@@ -1,6 +1,7 @@
 package spb.git
 
 import spb.Constants
+import spb.util.Config
 
 /**
  * @author Kai
@@ -8,7 +9,7 @@ import spb.Constants
 class Shell { //TODO Change this, lot of test code that needs optimizing
 
     var CMD = arrayOf("cmd", "/c"/*, "start", "cmd", "/k"*/)
-    var DIRECTORY = arrayOf("cd \"${Constants.MY_SECRET_LOCAL_PATH}\" && ")
+    var DIRECTORY = arrayOf("cd \"${Config.values?.proxyOutputPath}\" && ")
 
     fun executeShell(gitArguments : Array<String>) {
         println(Runtime.getRuntime().exec(CMD.plus(DIRECTORY).plus(gitArguments)).inputStream.reader().readText())

@@ -13,7 +13,8 @@ class GitActions { //TODO Change this, lot of test code that needs optimizing
     private var ADD = arrayOf("git", "add", ".")
     private var COMMIT = arrayOf("git", "commit", "-m", "Updated-${SimpleDateFormat("dd/M/yyyy-hh:mm:ss").format(Date())}")
     private var PUSH = arrayOf("git", "push", "origin", "main")
-    private var RELEASE = arrayOf("gh", "release", "create", SimpleDateFormat("yyMdd-hh").format(Date()), "--notes", "\"proxies-in-source-code.zip\"") //gh release create 0.0 --notes "test"
+    private var RELEASE = arrayOf("gh", "release", "create",
+        SimpleDateFormat("yyMdd-hh").format(Date()), "--notes", "proxies-in-source-code.zip")
 
     fun init() {
         Thread.sleep(60000)

@@ -4,6 +4,7 @@ import spb.Constants
 import spb.event.Event
 import spb.net.rs.ClientSocket
 import spb.net.rs.Stream
+import spb.util.Config
 import spb.util.FileBuilder
 import java.io.BufferedReader
 import java.io.IOException
@@ -49,15 +50,15 @@ class ProxyTester : Event(5) {
      * Returns responseCode 0 if successful, -1 if unsuccessful
      */
     private fun connectRS() {
-        val serverAddress = if(attempt > 1) Constants.VICTIM_BACKUP_SERVER_IP else Constants.VICTIM_TEST_SERVER_IP
-        val serverPort = if(attempt > 1) Constants.VICTIM_BACKUP_SERVER_PORT else Constants.VICTIM_TEST_SERVER_PORT
+        val serverAddress = if(attempt > 1) Config.values?.victimBackupServerIp else Config.values?.victimTestServerIp
+        val serverPort = if(attempt > 1) Config.values?.victimBackupServerPort else Config.values?.victimTestServerPort
 
         val clientSocket = if (Constants.IS_USING_PROXY && type.contains("socks"))
-            useSocksProxy(serverAddress, serverPort)
+            useSocksProxy(serverAddress, serverPort!!.toInt())
         else if(Constants.IS_USING_PROXY && type.contains("http"))
-            useHttpProxy(serverAddress, serverPort)
+            useHttpProxy(serverAddress, serverPort!!.toInt())
         else ClientSocket().init(
-            Socket(InetAddress.getByName(serverAddress), serverPort)
+            Socket(InetAddress.getByName(serverAddress), serverPort!!.toInt())
         )
         if(clientSocket == null) {
             println("Failed to connect to Proxy $formattedProxy")
@@ -83,7 +84,7 @@ class ProxyTester : Event(5) {
         else {
             if(attempt == 1)
                 init() //Restarts for second attempt on secondary test server
-            println("Connected to Proxy successfully, but failed to connect to RSPS with Proxy $formattedProxy")
+            println("Connected to Proxy successfully, but failed to connect to RSPS with Proxy $formattedProxy [${type.uppercase()}]")
         }
     }
 
@@ -91,7 +92,6 @@ class ProxyTester : Event(5) {
      *
      */
     private fun useSocksProxy(serverAddress: String?, serverPort: Int): ClientSocket? {
-        println("::usingSocksProxy::")
         val proxy = Proxy(Proxy.Type.SOCKS, InetSocketAddress(proxyAddress, proxyPort))
         val socket = Socket(proxy)
         if(socks4)
@@ -112,7 +112,6 @@ class ProxyTester : Event(5) {
     }
 
     private fun useHttpProxy(serverAddress: String?, serverPort: Int): ClientSocket? {
-        println("::usingHttpProxy::")
         val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(proxyAddress, proxyPort))
         val iNet : SocketAddress = proxy.address()
         val iNet2 = iNet as InetSocketAddress
@@ -124,9 +123,11 @@ class ProxyTester : Event(5) {
             outStream.flush()
             val inStream = BufferedReader(InputStreamReader(socket.getInputStream()))
             val httpConLine = inStream.readLine()
-            println(httpConLine)
+            if(Constants.DEBUG_MODE)
+                println(httpConLine)
         } catch (e : IOException) {
-            println(e.message)
+            if(Constants.DEBUG_MODE)
+                println(e.message)
             socket.close()
         }
         if(socket.isClosed) {
@@ -158,7 +159,7 @@ class ProxyTester : Event(5) {
         this.isRunning = false
         FileBuilder.appendTxtFiles(formattedProxy, type)
         FileBuilder.appendJsonFiles(formattedProxy, type)
-        println("Successfully connected to an RSPS with the Proxy $formattedProxy")
+        println("Successfully connected to an RSPS with the Proxy $formattedProxy [${type.uppercase()}]")
     }
 
 }
