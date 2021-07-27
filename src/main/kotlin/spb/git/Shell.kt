@@ -22,7 +22,7 @@ class Shell { //TODO Change this, lot of test code that needs optimizing
             println(Runtime.getRuntime().exec(
                 CMD.plus(DIRECTORY.joinToString { it } + gitArguments.joinToString(" ") { it }
                 )).inputStream.reader().readText())
-        Thread.sleep(10000)
+        Thread.sleep(60000)
     }
 
 }
