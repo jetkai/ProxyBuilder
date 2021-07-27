@@ -117,7 +117,7 @@ class ProxyTester : Event(5) {
         val iNet2 = iNet as InetSocketAddress
         val socket = Socket(iNet2.hostName, iNet2.port)
         try {
-            socket.soTimeout = 10000
+            socket.soTimeout = 5000
             val outStream: OutputStream = socket.getOutputStream()
             outStream.write(("CONNECT $serverAddress:$serverPort HTTP/1.0\n\n").byteInputStream(StandardCharsets.ISO_8859_1).readBytes())
             outStream.flush()
