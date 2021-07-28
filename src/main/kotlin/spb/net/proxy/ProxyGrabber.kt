@@ -6,6 +6,7 @@ import spb.Constants
 import spb.Main
 import spb.util.Config
 import spb.util.FileBuilder
+import java.lang.Exception
 import java.net.URL
 
 /**
@@ -21,22 +22,26 @@ class ProxyGrabber {
     private fun request() {
         val gitHubData = URL(Config.values?.proxyEndpointGithubUrl).readText()
         val requestedData = URL(Config.values?.proxyEndpointUrl).readText()
-
         val data = Json {
             this.prettyPrint = true
             this.encodeDefaults = true
             this.ignoreUnknownKeys = true
         }
 
+        println("test")
         Constants.STAGE = "GRABBING_PROXIES"
-        val gitHubProxies = data.decodeFromString<Array<ProxyInData>>("[$gitHubData]").associateBy{ it }.keys.toMutableList()[0]
+
+        var gitHubProxies = ProxyInData(arrayOf(), arrayOf(), arrayOf(), arrayOf());
+        try {
+            gitHubProxies = data.decodeFromString<Array<ProxyInData>>("[$gitHubData]").associateBy { it }.keys.toMutableList()[0]
+        } catch (e : Exception) { }
+
         val proxies = data.decodeFromString<Array<ProxyInData>>("[$requestedData]").associateBy{ it }.keys.toMutableList()[0]
 
         filterProxies(proxies.socks4.plus(gitHubProxies.socks4)).forEach { proxy -> validateProxy(proxy, "socks4") }
         filterProxies(proxies.socks5.plus(gitHubProxies.socks5)).forEach { proxy -> validateProxy(proxy, "socks5") }
         filterProxies(proxies.http.plus(gitHubProxies.http)).forEach { proxy -> validateProxy(proxy, "http") }
         filterProxies(proxies.https.plus(gitHubProxies.https)).forEach { proxy -> validateProxy(proxy, "https") }
-
     }
 
     private fun filterProxies(proxyArray : Array<String>): Array<String> {
