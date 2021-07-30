@@ -1,0 +1,9 @@
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: yellow;
+}
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-effect: null;
+}
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}

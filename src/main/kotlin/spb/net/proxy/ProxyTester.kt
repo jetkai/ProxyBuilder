@@ -20,18 +20,18 @@ import java.nio.charset.StandardCharsets
  */
 class ProxyTester : Event(5) {
 
-    var proxyAddress = ""   // "116.233.137.127" {SOCKS4-EXAMPLE}
-    var proxyPort = -1      // 4145 {SOCKS4-EXAMPLE}
-    var type = ""
-    var socks4 = false
-
-    private var formattedProxy = ""
+    private var formattedProxy = "" // 116.233.137.127:4145
     private var connected = false
     private var started = false
-    private var attempt = 0
+    private var attempt = 0         // Maximum 2
+
+    var proxyAddress = ""   // "116.233.137.127" {SOCKS4-EXAMPLE}
+    var proxyPort = -1      // 4145 {SOCKS4-EXAMPLE}
+    var type = ""           // SOCKS4, SOCKS5, HTTP, HTTPS
+    var socks4 = false
 
     override fun run() {
-        if(connected || attempt == 2) this.isRunning = false
+        if(connected || attempt >= 2) this.isRunning = false
         if(!started) init()
     }
 
@@ -52,7 +52,6 @@ class ProxyTester : Event(5) {
     private fun connectRS() {
         val serverAddress = if(attempt > 1) Config.values?.victimBackupServerIp else Config.values?.victimTestServerIp
         val serverPort = if(attempt > 1) Config.values?.victimBackupServerPort else Config.values?.victimTestServerPort
-
         val clientSocket = if (Constants.IS_USING_PROXY && type.contains("socks"))
             useSocksProxy(serverAddress, serverPort!!.toInt())
         else if(Constants.IS_USING_PROXY && type.contains("http"))
@@ -60,8 +59,12 @@ class ProxyTester : Event(5) {
         else ClientSocket().init(
             Socket(InetAddress.getByName(serverAddress), serverPort!!.toInt())
         )
+
         if(clientSocket == null) {
-            println("Failed to connect to Proxy $formattedProxy")
+            if(Constants.DEBUG_MODE)
+                println("Failed to connect to Proxy $formattedProxy")
+            if(attempt == 1)
+                init() //Restarts for second attempt on secondary test server
             return
         }
 
@@ -82,9 +85,10 @@ class ProxyTester : Event(5) {
         if(responseCode == 0)
             connected()
         else {
+            if(Constants.DEBUG_MODE)
+                println("Connected to Proxy successfully, but failed to connect to RSPS with Proxy $formattedProxy [${type.uppercase()}]")
             if(attempt == 1)
                 init() //Restarts for second attempt on secondary test server
-            println("Connected to Proxy successfully, but failed to connect to RSPS with Proxy $formattedProxy [${type.uppercase()}]")
         }
     }
 
@@ -103,11 +107,8 @@ class ProxyTester : Event(5) {
         } catch (e : IOException) {
             socket.close()
         }
-        if(socket.isClosed) {
-            if(attempt == 1)
-                init()
+        if(socket.isClosed)
             return null
-        }
         return ClientSocket().init(socket)
     }
 
@@ -130,11 +131,8 @@ class ProxyTester : Event(5) {
                 println(e.message)
             socket.close()
         }
-        if(socket.isClosed) {
-            if(attempt == 1)
-                init()
+        if(socket.isClosed)
             return null
-        }
         return ClientSocket().init(socket)
     }
 

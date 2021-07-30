@@ -16,7 +16,7 @@ class MonitorEvent : Event(55) { //55 minutes test
             ProxyGrabber().init()
         else if(Constants.STAGE == "GRABBING_PROXIES" && !Constants.STAGE.contains("GIT")) {
             Main.SPBExecutorService.proxyThreadFactory.interruptAllThreads()
-            Thread.sleep(30000)
+            Thread.sleep(60000)
             FileBuilder.updateReadme()
             GitActions().init()
         }

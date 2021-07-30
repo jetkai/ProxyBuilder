@@ -27,6 +27,8 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
     }
 
     fun appendTxtFiles(proxy : String, type : String) { //TESTING {FOR TESTING}
+        if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
+
         if(type == "socks4") File("${Config.values?.proxyOutputPath}/proxies-socks4.txt").appendText("$proxy\n")
         if(type == "socks5") File("${Config.values?.proxyOutputPath}/proxies-socks5.txt").appendText("$proxy\n")
         if(type.contains("socks")) File("${Config.values?.proxyOutputPath}/proxies-socks4+5.txt").appendText("$proxy\n")
@@ -41,6 +43,7 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
 
     //TODO - Some errors here, need to sleep
     fun appendJsonFiles(fProxy : String, type : String) { //TESTING
+        if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
 
         if(type == "socks4") socks4Array += fProxy
         if(type == "socks5") socks5Array += fProxy

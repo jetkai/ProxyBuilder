@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="468.0" prefWidth="662.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ScrollPane prefHeight="468.0" prefWidth="662.0">
+         <content>
+            <GridPane prefHeight="466.0" prefWidth="660.0" style="-fx-background-color: black;">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="137.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="294.0" minHeight="10.0" prefHeight="294.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <TabPane prefHeight="200.0" prefWidth="200.0" style=".tab-pane *.tab-header-background: black;" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1">
+                    <tabs>
+                        <Tab text="ALL">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox alignment="CENTER_RIGHT" prefHeight="51.0" prefWidth="329.0">
+                                       <children>
+                                          <VBox alignment="CENTER_LEFT" prefHeight="51.0" prefWidth="124.0">
+                                             <children>
+                                                <Label prefHeight="21.0" prefWidth="118.0" text="Good: 0" textFill="#01bf47" />
+                                                <Label prefHeight="21.0" prefWidth="117.0" text="Bad: 0" textFill="#e80a0a">
+                                                   <opaqueInsets>
+                                                      <Insets right="3.0" />
+                                                   </opaqueInsets>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                          <SplitMenuButton mnemonicParsing="false" text="Copy As">
+                                            <items>
+                                              <MenuItem mnemonicParsing="false" text=".txt" />
+                                              <MenuItem mnemonicParsing="false" text=".json" />
+                                                <MenuItem mnemonicParsing="false" text=".csv" />
+                                            </items>
+                                          </SplitMenuButton>
+                                          <SplitMenuButton mnemonicParsing="false" text="Save As">
+                                            <items>
+                                              <MenuItem mnemonicParsing="false" text=".txt" />
+                                              <MenuItem mnemonicParsing="false" text=".json" />
+                                                <MenuItem mnemonicParsing="false" text=".csv" />
+                                            </items>
+                                          </SplitMenuButton>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </Tab>
+                      <Tab text="SOCKS4">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </Tab>
+                      <Tab text="SOCKS5">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </Tab>
+                        <Tab text="HTTP">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </Tab>
+                        <Tab text="HTTPS">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </Tab>
+                    </tabs>
+                  </TabPane>
+                  <TextArea prefHeight="200.0" prefWidth="200.0" text="&lt;Input Proxies To Test&gt;" wrapText="true" GridPane.rowIndex="1" />
+                  <TextArea disable="true" editable="false" prefHeight="200.0" prefWidth="200.0" text="&lt;Output Successful Proxies&gt;" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2" />
+               </children>
+            </GridPane>
+         </content>
+      </ScrollPane>
+   </children>
+</VBox>
