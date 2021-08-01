@@ -7,12 +7,12 @@
   "victimBackupServerPort": "43594",
 
   "proxyEndpointUrl": "<ENTER YOUR ENDPOINT-URL HERE>",
-  "proxyEndpointGithubUrl": "https://raw.githubusercontent.com/KaiBurton/free-proxies-autoupdated/main/proxies.json",
+  "proxyEndpointGithubUrl": "https://raw.githubusercontent.com/jetkai/free-proxies-autoupdated/main/proxies.json",
 
   "proxyGithubList": [
-    "https://raw.githubusercontent.com/KaiBurton/free-proxies-autoupdated/main/proxies-socks4.txt",
-    "https://raw.githubusercontent.com/KaiBurton/free-proxies-autoupdated/main/proxies-socks5.txt",
-    "https://raw.githubusercontent.com/KaiBurton/free-proxies-autoupdated/main/proxies-http.txt",
-    "https://raw.githubusercontent.com/KaiBurton/free-proxies-autoupdated/main/proxies-https.txt"
+    "https://raw.githubusercontent.com/jetkai/free-proxies-autoupdated/main/proxies-socks4.txt",
+    "https://raw.githubusercontent.com/jetkai/free-proxies-autoupdated/main/proxies-socks5.txt",
+    "https://raw.githubusercontent.com/jetkai/free-proxies-autoupdated/main/proxies-http.txt",
+    "https://raw.githubusercontent.com/jetkai/free-proxies-autoupdated/main/proxies-https.txt"
   ]
 }
