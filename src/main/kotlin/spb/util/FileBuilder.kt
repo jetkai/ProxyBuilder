@@ -10,6 +10,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * @author Kai
+ */
 object FileBuilder { //TODO - Complete rewrite this entire object file, re-write into class, clean-up & optimize
 
     private val socks4Array = arrayListOf<String>()

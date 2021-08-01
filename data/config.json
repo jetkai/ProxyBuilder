@@ -1,5 +1,5 @@
 {
-  "proxyOutputPath": "proxies/output",
+  "proxyOutputPath": "data/proxies/output",
 
   "victimTestServerIp": "127.0.0.1",
   "victimTestServerPort": "43594",

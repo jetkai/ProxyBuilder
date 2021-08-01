@@ -2,6 +2,9 @@ package spb.util
 
 import kotlinx.serialization.Serializable
 
+/**
+ * @author Kai
+ */
 @Serializable
 class ConfigData(
     val proxyOutputPath : String, val victimTestServerIp : String, val victimTestServerPort : Int,

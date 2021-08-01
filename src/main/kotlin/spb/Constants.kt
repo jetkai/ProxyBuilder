@@ -1,5 +1,7 @@
 package spb
 
+import java.io.File
+
 /**
  * @author Kai
  */
@@ -15,5 +17,7 @@ object Constants {
 
     val IS_WINDOWS = System.getProperty("os.name").startsWith("Windows")
     val IS_PROXY_BUILDER_USER = System.getProperty("user.name").equals("proxybuilder")
+
+    val PROXY_BUILDER_DATA_LOCATION = File(".").canonicalPath;
 
 }

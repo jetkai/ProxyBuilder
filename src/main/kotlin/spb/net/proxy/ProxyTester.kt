@@ -122,13 +122,14 @@ class ProxyTester : Event(5) {
             val outStream: OutputStream = socket.getOutputStream()
             outStream.write(("CONNECT $serverAddress:$serverPort HTTP/1.0\n\n").byteInputStream(StandardCharsets.ISO_8859_1).readBytes())
             outStream.flush()
-            val inStream = BufferedReader(InputStreamReader(socket.getInputStream()))
-            val httpConLine = inStream.readLine()
-            if(Constants.DEBUG_MODE)
-                println(httpConLine)
+            if(Constants.DEBUG_MODE) {
+                val inStream = BufferedReader(InputStreamReader(socket.getInputStream()))
+                //Good Response = "HTTP/1.0 200 {OK/Connection established}" or "HTTP/1.1 200 {OK/Connection established}"
+                println(inStream.readLine())
+            }
         } catch (e : IOException) {
-            if(Constants.DEBUG_MODE)
-                println(e.message)
+            //Bad Response = "Connection reset", "Read timed out", "null"
+            if(Constants.DEBUG_MODE) println(e.message)
             socket.close()
         }
         if(socket.isClosed)
