@@ -10,6 +10,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStream
+import java.lang.Exception
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.net.*
@@ -39,7 +40,11 @@ class ProxyTester : Event(5) {
         attempt++
         formattedProxy = "$proxyAddress:$proxyPort"
         if(proxyAddress.isNotEmpty() && proxyPort > 0)
-            connectRS()
+            try {
+                connectRS()
+            } catch (e : Exception) {
+                println(e.message)
+            }
         else
             println("Proxy is empty.")
     }

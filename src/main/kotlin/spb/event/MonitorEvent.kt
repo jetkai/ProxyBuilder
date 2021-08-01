@@ -5,11 +5,12 @@ import spb.Main
 import spb.git.GitActions
 import spb.net.proxy.ProxyGrabber
 import spb.util.FileBuilder
+import java.lang.Exception
 
 /**
  * @author Kai
  */
-class MonitorEvent : Event(55) { //55 minutes test
+class MonitorEvent : Event(8) { //55 minutes test
 
     override fun run() {
         if(Constants.STAGE != "GRABBING_PROXIES" && !Constants.STAGE.contains("GIT"))
@@ -17,8 +18,12 @@ class MonitorEvent : Event(55) { //55 minutes test
         else if(Constants.STAGE == "GRABBING_PROXIES" && !Constants.STAGE.contains("GIT")) {
             Main.SPBExecutorService.proxyThreadFactory.interruptAllThreads()
             Thread.sleep(60000)
-            FileBuilder.updateReadme()
-            GitActions().init()
+            try {
+                FileBuilder.updateReadme()
+                GitActions().init()
+            } catch (e : Exception) {
+                print(e.message)
+            }
         }
     }
 

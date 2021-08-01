@@ -16,7 +16,11 @@ class ProxyGrabber {
 
     fun init() {
         FileBuilder.deleteOldProxyFiles()
-        this.request()
+        try {
+            this.request()
+        } catch (e : Exception) {
+            println(e.message)
+        }
     }
 
     private fun request() {
