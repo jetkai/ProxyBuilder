@@ -7,7 +7,6 @@ import spb.Main
 import spb.util.Config
 import spb.util.FileBuilder
 import spb.util.ProxiesTextToJson
-import java.net.MalformedURLException
 import java.net.URL
 
 /**
@@ -22,11 +21,11 @@ class ProxyGrabber {
 
     private fun request() {
         val apiProxiesJson = try { URL(Config.values?.proxyEndpointUrl).readText() } catch (e : Exception) {
-            println("Issue with connecting to proxyEndpointUrl from config.json") }
+            println("Issue with connecting to proxyEndpointUrl from config.json:\n${e.message}") }
         val gitHubProxiesJson = try { URL(Config.values?.proxyEndpointGithubUrl).readText() } catch (e : Exception) {
-            println("Issue with connecting to proxyEndpointGithubUrl from config.json") }
+            println("Issue with connecting to proxyEndpointGithubUrl from config.json:\n${e.message}") }
         val localProxiesJson = try { ProxiesTextToJson().convert() } catch (e : Exception) {
-            println("Issue with converting text files to Json") }
+            println("Issue with converting text files to Json:\n${e.message}") }
 
         var apiProxies = ProxyData(arrayOf(), arrayOf(), arrayOf(), arrayOf())
         var gitHubProxies = ProxyData(arrayOf(), arrayOf(), arrayOf(), arrayOf())
