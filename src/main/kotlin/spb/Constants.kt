@@ -18,6 +18,7 @@ object Constants {
     val IS_WINDOWS = System.getProperty("os.name").startsWith("Windows")
     val IS_PROXY_BUILDER_USER = System.getProperty("user.name").equals("proxybuilder")
 
-    val PROXY_BUILDER_DATA_LOCATION : String = File(".").canonicalPath
+    private val IS_RUNNING_AS_JAR : Boolean = Main::class.java.getResource("Main.class")?.toString()!!.startsWith("jar:")
+    val PROXY_BUILDER_DATA_LOCATION : String = if(IS_RUNNING_AS_JAR) File("../../").canonicalPath else File(".").canonicalPath
 
 }
