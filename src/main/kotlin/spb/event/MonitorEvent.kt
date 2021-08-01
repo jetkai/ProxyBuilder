@@ -10,7 +10,7 @@ import java.lang.Exception
 /**
  * @author Kai
  */
-class MonitorEvent : Event(8) { //55 minutes test
+class MonitorEvent : Event(55) { //55 minutes test
 
     override fun run() {
         if(Constants.STAGE != "GRABBING_PROXIES" && !Constants.STAGE.contains("GIT"))
