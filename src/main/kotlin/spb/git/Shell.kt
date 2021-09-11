@@ -8,19 +8,19 @@ import spb.util.Config
  */
 class Shell { //TODO Change this, lot of test code that needs optimizing
 
-    var CMD = when {
+    private var command = when {
         Constants.IS_WINDOWS -> (arrayOf("cmd", "/c"/*, "start", "cmd", "/k"*/))
         else -> (arrayOf("/bin/sh", "-c")) //isLinux
     }
 
-    var DIRECTORY = arrayOf("cd \"${Config.values?.proxyOutputPath}\" && ")
+    private var directory = arrayOf("cd \"${Config.values?.proxyOutputPath}\" && ")
 
     fun executeShell(gitArguments : Array<String>) {
         if(Constants.IS_WINDOWS)
-            println(Runtime.getRuntime().exec(CMD.plus(DIRECTORY).plus(gitArguments)).inputStream.reader().readText())
+            println(Runtime.getRuntime().exec(command.plus(directory).plus(gitArguments)).inputStream.reader().readText())
         else
             println(Runtime.getRuntime().exec(
-                CMD.plus(DIRECTORY.joinToString { it } + gitArguments.joinToString(" ") { it }
+                command.plus(directory.joinToString { it } + gitArguments.joinToString(" ") { it }
                 )).inputStream.reader().readText())
         Thread.sleep(60000)
     }

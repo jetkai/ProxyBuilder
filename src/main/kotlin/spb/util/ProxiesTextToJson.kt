@@ -1,5 +1,6 @@
 package spb.util
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import spb.Constants
@@ -23,6 +24,7 @@ class ProxiesTextToJson {
      * 123.123.123.123:80
      * 123.123.123.124:4145
      */
+    @OptIn(ExperimentalSerializationApi::class)
     public fun convert() : String {
         val proxies = ProxyData(arrayOf(), arrayOf(), arrayOf(), arrayOf())
 

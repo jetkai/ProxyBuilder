@@ -125,7 +125,11 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
             )
         }
 
-        readmeFile.writeText(originalText.plus(newText).plus("\n\nThx Co Pure Gs - Sort miester! \uD83D\uDC9F"))
+        readmeFile.writeText(
+            originalText
+            .plus(newText)
+            .plus("\n\nThx Co Pure Gs - Sort miester! \uD83D\uDC9F")
+        )
     }
 
 

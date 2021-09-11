@@ -11,15 +11,12 @@ class SPBThreadFactory (private val name : String) : ThreadFactory {
 
     //Creates a new thread
     override fun newThread(r: Runnable?): Thread {
-        val t = Thread(r)
-        threads.add(t)
-        println("Total Threads:"+threads.size)
-        t.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _: Thread?, _: Throwable? ->
-            println(
-                "[ALERT] ONE OF THE PROXY THREADS HAVE CRASHED"
-            )
+        val thread = Thread(r)
+        threads.add(thread)
+        thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _: Thread?, _: Throwable? ->
+            println("[ALERT] ONE OF THE PROXY THREADS HAVE CRASHED")
         }
-        return t
+        return thread
     }
 
     //TODO - Using later
@@ -29,8 +26,7 @@ class SPBThreadFactory (private val name : String) : ThreadFactory {
 
     //TODO - After X amount of minutes, sometimes can be 100k+ new proxies, this can take forever
     fun interruptAllThreads() {
-        for(thread in threads)
-            thread.interrupt()
+        threads.forEach { thread -> thread.interrupt() }
     }
 
 }

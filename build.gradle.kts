@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.21"
-    kotlin("plugin.serialization") version "1.5.21"
+    kotlin("jvm") version "1.5.30"
+    kotlin("plugin.serialization") version "1.5.30"
     application
 }
 
@@ -47,7 +47,7 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 application {

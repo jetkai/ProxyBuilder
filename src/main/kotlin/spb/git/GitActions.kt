@@ -10,20 +10,20 @@ import kotlin.system.exitProcess
  */
 class GitActions { //TODO Change this, lot of test code that needs optimizing
 
-    private var ADD = arrayOf("git", "add", ".")
-    private var COMMIT = arrayOf("git", "commit", "-m", "Updated-${SimpleDateFormat("dd/MM/yyyy-HH:mm:ss").format(Date())}")
-    private var PUSH = arrayOf("git", "push", "origin", "main")
-    private var RELEASE = arrayOf("gh", "release", "create",
+    private var add = arrayOf("git", "add", ".")
+    private var commit = arrayOf("git", "commit", "-m", "Updated-${SimpleDateFormat("dd/MM/yyyy-HH:mm:ss").format(Date())}")
+    private var push = arrayOf("git", "push", "origin", "main")
+    private var release = arrayOf("gh", "release", "create",
         SimpleDateFormat("yyMMdd-HH").format(Date()), "--notes", "proxies-in-source-code.zip")
 
     fun init() {
         Thread.sleep(30000)
 
         Constants.STAGE = "RUNNING GIT"
-        Shell().executeShell(ADD); println("Committing.")
-        Shell().executeShell(COMMIT); println("Pushing.")
-        Shell().executeShell(PUSH); println("Releasing.")
-        Shell().executeShell(RELEASE); println("Done.")
+        Shell().executeShell(add); println("Committing.")
+        Shell().executeShell(commit); println("Pushing.")
+        Shell().executeShell(push); println("Releasing.")
+        Shell().executeShell(release); println("Done.")
         Constants.STAGE = "FINISHED"
 
         if(Constants.EXIT_UPON_COMPLETION)

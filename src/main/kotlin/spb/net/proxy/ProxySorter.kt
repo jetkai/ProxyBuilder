@@ -1,5 +1,6 @@
 package spb.net.proxy
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -9,6 +10,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.sql.Timestamp
 import java.text.DateFormat
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipFile
@@ -50,6 +52,7 @@ class ProxySorter {
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private fun addToArray(fileName : String, contentsIn: InputStream) {
         var proxyData = ProxySorterData(arrayOf(), arrayOf(), arrayOf(), arrayOf(), 0L)
         val proxyDataJson = contentsIn.bufferedReader().use { it.readText() }
@@ -61,7 +64,11 @@ class ProxySorter {
 
         val rawDate = fileName.replace("proxy-list-", "").replace(".zip", "")
         val df : DateFormat = SimpleDateFormat("yyMMdd-HH")
-        proxyData.timestamp = Timestamp((df.parse(rawDate) as Date).time).time
+        try {
+            proxyData.timestamp = Timestamp((df.parse(rawDate) as Date).time).time
+        } catch (exception : ParseException) {
+            proxyData.timestamp = 0
+        }
 
         if(proxyData.socks4.isNotEmpty())
             proxyDataArray.add(proxyData)
@@ -86,6 +93,7 @@ class ProxySorter {
 
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private fun writeToFile(proxies : ProxySorterData) {
         val json = Json {
             this.prettyPrint = true

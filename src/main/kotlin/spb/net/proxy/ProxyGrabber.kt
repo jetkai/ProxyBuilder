@@ -1,5 +1,6 @@
 package spb.net.proxy
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import spb.Constants
@@ -23,6 +24,7 @@ class ProxyGrabber {
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private fun request() {
         val apiProxiesJson = try { URL(Config.values?.proxyEndpointUrl).readText() } catch (e : Exception) {
             println("Issue with connecting to proxyEndpointUrl from config.json:\n${e.message}") }
