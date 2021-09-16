@@ -36,7 +36,7 @@ class GitHubApi {
         download()
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
+ /*   @OptIn(ExperimentalSerializationApi::class)*/
     fun request() {
         val client = HttpClient.newBuilder().build()
         var pageNumber = 0

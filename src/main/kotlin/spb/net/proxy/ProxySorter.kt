@@ -52,7 +52,7 @@ class ProxySorter {
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
+    /*@OptIn(ExperimentalSerializationApi::class)*/
     private fun addToArray(fileName : String, contentsIn: InputStream) {
         var proxyData = ProxySorterData(arrayOf(), arrayOf(), arrayOf(), arrayOf(), 0L)
         val proxyDataJson = contentsIn.bufferedReader().use { it.readText() }
@@ -93,7 +93,7 @@ class ProxySorter {
 
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
+  /*  @OptIn(ExperimentalSerializationApi::class)*/
     private fun writeToFile(proxies : ProxySorterData) {
         val json = Json {
             this.prettyPrint = true

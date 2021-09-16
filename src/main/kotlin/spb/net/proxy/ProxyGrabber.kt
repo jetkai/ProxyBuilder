@@ -24,7 +24,7 @@ class ProxyGrabber {
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
+  /*  @OptIn(ExperimentalSerializationApi::class)*/
     private fun request() {
         val apiProxiesJson = try { URL(Config.values?.proxyEndpointUrl).readText() } catch (e : Exception) {
             println("Issue with connecting to proxyEndpointUrl from config.json:\n${e.message}") }

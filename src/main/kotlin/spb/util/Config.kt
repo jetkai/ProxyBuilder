@@ -13,7 +13,7 @@ object Config {
 
     var values : ConfigData ?= null
 
-    @OptIn(ExperimentalSerializationApi::class)
+  /*  @OptIn(ExperimentalSerializationApi::class)*/
     fun init() {
         val configData = when {
             Constants.IS_PROXY_BUILDER_USER -> File("${System.getProperty("user.home")}/IntelliJProjects/secrets/config.json").readText()
