@@ -10,6 +10,8 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * @author Kai
@@ -80,6 +82,7 @@ class GitHubApi {
         //https://github.com/jetkai/proxy-list/archive/refs/tags/210911-15.zip [FINAL]
         val client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build()
         gitHubLinks.forEach { url ->
+
             val builder = HttpRequest.newBuilder()
             builder.header("User-Agent", userAgent)
 
@@ -87,12 +90,17 @@ class GitHubApi {
             val downloadUrl = "https://github.com/jetkai/proxy-list/archive/refs/tags/$zipName"
             val outputPath = "data/proxies/compressed/"
 
-            val request = builder.uri(URI.create(downloadUrl)).build()
+            if(Files.exists(Path.of(outputPath + zipName))) {
+                println("$outputPath$zipName already exists.")
+            } else {
 
-            val inStream = client.sendAsync(request, BodyHandlers.ofInputStream())
-                .thenApply { response: HttpResponse<InputStream> -> response.body() }.join()
+                val request = builder.uri(URI.create(downloadUrl)).build()
 
-            FileOutputStream(outputPath + zipName).use { output -> inStream.transferTo(output) }
+                val inStream = client.sendAsync(request, BodyHandlers.ofInputStream())
+                    .thenApply { response: HttpResponse<InputStream> -> response.body() }.join()
+
+                FileOutputStream(outputPath + zipName).use { output -> inStream.transferTo(output) }
+            }
         }
     }
 

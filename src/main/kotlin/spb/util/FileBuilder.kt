@@ -1,5 +1,6 @@
 package spb.util
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.add
@@ -45,6 +46,7 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
     }
 
     //TODO - Some errors here, need to sleep
+    @OptIn(ExperimentalSerializationApi::class)
     fun appendJsonFiles(fProxy : String, type : String) { //TESTING
         if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
 

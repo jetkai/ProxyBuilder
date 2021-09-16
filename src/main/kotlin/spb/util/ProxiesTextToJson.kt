@@ -25,7 +25,7 @@ class ProxiesTextToJson {
      * 123.123.123.124:4145
      */
     @OptIn(ExperimentalSerializationApi::class)
-    public fun convert() : String {
+    fun convert() : String {
         val proxies = ProxyData(arrayOf(), arrayOf(), arrayOf(), arrayOf())
 
         val paths = arrayListOf(

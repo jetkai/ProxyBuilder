@@ -5,12 +5,11 @@ import spb.Main
 import spb.git.GitActions
 import spb.net.proxy.ProxyGrabber
 import spb.util.FileBuilder
-import java.lang.Exception
 
 /**
  * @author Kai
  */
-class MonitorEvent : Event(55) { //55 minutes test
+class MonitorEvent : Event(90) { //90 minutes
 
     override fun run() {
         if(Constants.STAGE != "GRABBING_PROXIES" && !Constants.STAGE.contains("GIT"))
