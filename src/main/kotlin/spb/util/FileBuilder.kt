@@ -46,7 +46,7 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
     }
 
     //TODO - Some errors here, need to sleep
-/*    @OptIn(ExperimentalSerializationApi::class)*/
+    @ExperimentalSerializationApi
     fun appendJsonFiles(fProxy : String, type : String) { //TESTING
         if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
 
@@ -152,6 +152,7 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
     }
 
     //TODO - Some errors here, need to sleep
+    @ExperimentalSerializationApi
     fun buildJsonFiles() { //TESTING
         val rawJson = Json
         val prettyJson = Json { prettyPrint = true; encodeDefaults = true }

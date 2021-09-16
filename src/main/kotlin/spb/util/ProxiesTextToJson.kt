@@ -12,6 +12,7 @@ import java.io.File
  */
 class ProxiesTextToJson {
 
+    @ExperimentalSerializationApi
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -24,7 +25,7 @@ class ProxiesTextToJson {
      * 123.123.123.123:80
      * 123.123.123.124:4145
      */
-   /* @OptIn(ExperimentalSerializationApi::class)*/
+    @ExperimentalSerializationApi
     fun convert() : String {
         val proxies = ProxyData(arrayOf(), arrayOf(), arrayOf(), arrayOf())
 

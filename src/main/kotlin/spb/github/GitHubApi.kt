@@ -25,18 +25,20 @@ class GitHubApi {
     private val gitHubLinks = arrayListOf<String>()
 
     companion object {
+        @ExperimentalSerializationApi
         @JvmStatic
         fun main(args : Array<String>) {
             GitHubApi().init()
         }
     }
     
+    @ExperimentalSerializationApi
     private fun init() {
         request()
         download()
     }
 
- /*   @OptIn(ExperimentalSerializationApi::class)*/
+    @ExperimentalSerializationApi
     fun request() {
         val client = HttpClient.newBuilder().build()
         var pageNumber = 0
