@@ -5,7 +5,6 @@ import spb.event.Event
 import spb.net.rs.ClientSocket
 import spb.net.rs.Stream
 import spb.util.Config
-import spb.util.FileBuilder
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -160,8 +159,14 @@ class ProxyTester : Event(5) {
     private fun connected() {
         this.connected = true
         this.isRunning = false
-        FileBuilder.appendTxtFiles(formattedProxy, type)
-        FileBuilder.appendJsonFiles(formattedProxy, type)
+        when (type) {
+            "socks4" -> VerifiedProxies.socks4 += formattedProxy
+            "socks5" -> VerifiedProxies.socks5 += formattedProxy
+            "http" -> VerifiedProxies.http += formattedProxy
+            "https" -> VerifiedProxies.https += formattedProxy
+        }
+        /*FileBuilder.appendTxtFiles(formattedProxy, type)
+        FileBuilder.appendJsonFiles(formattedProxy, type)*/
         println("Successfully connected to an RSPS with the Proxy $formattedProxy [${type.uppercase()}]")
     }
 

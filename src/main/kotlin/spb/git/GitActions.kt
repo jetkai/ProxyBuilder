@@ -1,5 +1,6 @@
 package spb.git
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import spb.Constants
 import java.text.SimpleDateFormat
 import java.util.*
@@ -8,6 +9,7 @@ import kotlin.system.exitProcess
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 class GitActions { //TODO Change this, lot of test code that needs optimizing
 
     private var add = arrayOf("git", "add", ".")

@@ -83,7 +83,7 @@ class GitHubApi {
         //https://github.com/jetkai/proxy-list/releases/tag/210911-15 [ORIGINAL]
         //https://github.com/jetkai/proxy-list/archive/refs/tags/210911-15.zip [FINAL]
         val client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build()
-        gitHubLinks.forEach { url ->
+        gitHubLinks.distinct().forEach { url ->
 
             val builder = HttpRequest.newBuilder()
             builder.header("User-Agent", userAgent)
@@ -95,9 +95,7 @@ class GitHubApi {
             if(Files.exists(Path.of(outputPath + zipName))) {
                 println("$outputPath$zipName already exists.")
             } else {
-
                 val request = builder.uri(URI.create(downloadUrl)).build()
-
                 val inStream = client.sendAsync(request, BodyHandlers.ofInputStream())
                     .thenApply { response: HttpResponse<InputStream> -> response.body() }.join()
 

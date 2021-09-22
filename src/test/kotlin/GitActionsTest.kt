@@ -1,41 +1,33 @@
-import spb.Constants
+import kotlinx.serialization.ExperimentalSerializationApi
+import spb.net.proxy.VerifiedProxies
 import spb.util.Config
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.system.exitProcess
+import spb.util.FileBuilder
 
-private var ADD = arrayOf("git", "add", ".")
-private var COMMIT = arrayOf("git", "commit", "-m", "Updated-${SimpleDateFormat("dd/M/yyyy-hh:mm:ss").format(Date())}")
-private var PUSH = arrayOf("git", "push", "origin", "main")
-private var RELEASE = arrayOf("gh", "release", "create",
-    SimpleDateFormat("yyMdd-hh").format(Date()), "--notes", "proxies-in-source-code.zip") //gh release create 0.0 --notes "test"
-
-
+@ExperimentalSerializationApi
 fun main() {
     Config.init()
-    //println(System.getProperty("user.name"))
-   //init()
+    create()
 }
 
-fun init() {
-    //Thread.sleep(60000)
-
-    Constants.STAGE = "RUNNING GIT"
-    //executeShell(ADD); println("Committing.")
-   // executeShell(COMMIT); println("Pushing.")
-   // executeShell(PUSH); println("Releasing.")
-    executeShell(RELEASE); println("Done.")
-    Constants.STAGE = "FINISHED"
-
-    if(Constants.EXIT_UPON_COMPLETION)
-        exitProcess(0) //Exit if not leaving running
+@ExperimentalSerializationApi
+fun create() {
+    //verifiedProxiesTestBatch()
+    FileBuilder.buildWorkingProxyHistory()
+    //FileBuilder.buildCsvFile()
+    //FileBuilder.buildTxtFiles()
+    //FileBuilder.buildJsonFiles()
 }
 
-var CMD = arrayOf("cmd", "/c", "start", "cmd", "/k")
-var DIRECTORY = arrayOf("cd \"${Config.values?.proxyOutputPath}\" && ")
-
-fun executeShell(gitArguments : Array<String>) {
-    println(Runtime.getRuntime().exec(CMD.plus(DIRECTORY).plus(gitArguments)).inputStream.reader().readText())
-    Thread.sleep(10000)
+fun verifiedProxiesTestBatch() {
+    VerifiedProxies.socks4 += "SOCKS4:1"
+    VerifiedProxies.socks4 += "SOCKS4:2"
+    VerifiedProxies.socks5 += "SOCKS5:1"
+    VerifiedProxies.http += "HTTP:1"
+    VerifiedProxies.http += "HTTP:2"
+    VerifiedProxies.http += "HTTP:3"
+    VerifiedProxies.http += "HTTP:4"
+    VerifiedProxies.http += "HTTP:5"
+    VerifiedProxies.https += "HTTPS:1"
+    VerifiedProxies.https += "HTTPS:2"
 }
 

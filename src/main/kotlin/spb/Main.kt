@@ -1,5 +1,6 @@
 package spb
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import spb.event.MonitorEvent
 import spb.util.Config
 import spb.util.SPBExecutorService
@@ -7,6 +8,7 @@ import spb.util.SPBExecutorService
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 object Main {
 
     val SPBExecutorService = SPBExecutorService() //TODO CHANGE THIS (TEMP)

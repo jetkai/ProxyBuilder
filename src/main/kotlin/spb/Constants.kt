@@ -1,10 +1,12 @@
 package spb
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.File
 
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 object Constants {
 
     var STAGE = "STARTING"
