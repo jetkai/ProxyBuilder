@@ -1,5 +1,6 @@
 package spb.net.proxy
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import spb.Constants
 import spb.event.Event
 import spb.net.rs.ClientSocket
@@ -17,6 +18,7 @@ import java.nio.charset.StandardCharsets
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 class ProxyTester : Event(5) {
 
     private var formattedProxy = "" // 116.233.137.127:4145

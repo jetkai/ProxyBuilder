@@ -13,9 +13,9 @@ import java.net.URL
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 class ProxyGrabber {
 
-    @ExperimentalSerializationApi
     fun init() {
         FileBuilder.deleteOldProxyFiles()
         try {
@@ -24,8 +24,7 @@ class ProxyGrabber {
             println(e.message)
         }
     }
-
-    @ExperimentalSerializationApi
+    
     private fun request() {
         val apiProxiesJson = try { URL(Config.values?.proxyEndpointUrl).readText() } catch (e : Exception) {
             println("Issue with connecting to proxyEndpointUrl from config.json:\n${e.message}") }
