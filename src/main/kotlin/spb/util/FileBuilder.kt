@@ -261,24 +261,24 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
     }
 
     @ExperimentalSerializationApi
-    fun buildWorkingProxyHistory() { //TESTING
+    fun buildProxyArchive() { //TESTING
         if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
 
-        val proxyHistoryUrl = "https://github.com/jetkai/proxy-list/raw/main/archive/working-proxies-history.json"
-        val proxyHistoryJson = try { URL(proxyHistoryUrl).readText() } catch (e : Exception) {
+        val proxyArchiveUrl = "https://github.com/jetkai/proxy-list/raw/main/archive/working-proxies-history.json"
+        val proxyArchiveJson = try { URL(proxyArchiveUrl).readText() } catch (e : Exception) {
             println("Issue with connecting to githubusercontent.com:\n${e.message}") }
 
-        val data = Json { prettyPrint = true; ignoreUnknownKeys = true }
+        val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
-        var proxyHistory = ProxyData(arrayOf(), arrayOf(), arrayOf(), arrayOf())
+        var proxyArchive = ProxyData(arrayOf(), arrayOf(), arrayOf(), arrayOf())
         try {
-            proxyHistory = data.decodeFromString<Array<ProxyData>>("[$proxyHistoryJson]").associateBy{ it }.keys.toMutableList()[0]
+            proxyArchive = json.decodeFromString<Array<ProxyData>>("[$proxyArchiveJson]").associateBy{ it }.keys.toMutableList()[0]
         } catch (i : Exception) { }
 
-        val socks4Array = sortByIp(proxyHistory.socks4.plus(VerifiedProxies.socks4).distinct())
-        val socks5Array = sortByIp(proxyHistory.socks5.plus(VerifiedProxies.socks5).distinct())
-        val httpArray = sortByIp(proxyHistory.http.plus(VerifiedProxies.http).distinct())
-        val httpsArray = sortByIp(proxyHistory.https.plus(VerifiedProxies.https).distinct()) //Test Sorting
+        val socks4Array = sortByIp(proxyArchive.socks4.plus(VerifiedProxies.socks4).distinct())
+        val socks5Array = sortByIp(proxyArchive.socks5.plus(VerifiedProxies.socks5).distinct())
+        val httpArray = sortByIp(proxyArchive.http.plus(VerifiedProxies.http).distinct())
+        val httpsArray = sortByIp(proxyArchive.https.plus(VerifiedProxies.https).distinct()) //Test Sorting
 
         /**
          * WRITE CSV
@@ -299,7 +299,7 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
         buildTxtFiles(socks4Array, socks5Array, httpArray, httpsArray, true)
     }
 
-    fun sortByIp(proxyArray: List<String>): List<String> {
+    fun sortByIp(proxyArray : List<String>): List<String> {
         return proxyArray.sortedWith { o1, o2 ->
             val ip = o1.split(":")[0].split(".").toTypedArray()
             var format = ""

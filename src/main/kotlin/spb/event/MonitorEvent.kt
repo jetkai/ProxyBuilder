@@ -27,10 +27,10 @@ class MonitorEvent : Event(90) { //Executes this Event every 90 minutes
                 //Create files with verified proxies
                 val socks4 = FileBuilder.sortByIp(VerifiedProxies.socks4); val socks5 = FileBuilder.sortByIp(VerifiedProxies.socks5)
                 val http = FileBuilder.sortByIp(VerifiedProxies.http); val https = FileBuilder.sortByIp(VerifiedProxies.https)
-
                 FileBuilder.buildTxtFiles(socks4, socks5, http, https, false)
                 FileBuilder.buildJsonFiles(socks4, socks5, http, https, false)
                 FileBuilder.buildCsvFile(socks4, socks5, http, https, false)
+                FileBuilder.buildProxyArchive()
                 //Sleep MT 30s
                 Thread.sleep(30000)
                 //Update Readme file

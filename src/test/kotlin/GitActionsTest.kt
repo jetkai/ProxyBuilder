@@ -12,7 +12,7 @@ fun main() {
 @ExperimentalSerializationApi
 fun create() {
     //verifiedProxiesTestBatch()
-    FileBuilder.buildWorkingProxyHistory()
+    FileBuilder.buildProxyArchive()
     //FileBuilder.buildCsvFile()
     //FileBuilder.buildTxtFiles()
     //FileBuilder.buildJsonFiles()
