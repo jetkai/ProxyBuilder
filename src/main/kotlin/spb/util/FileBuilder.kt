@@ -102,10 +102,12 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
                      isWritingArchive: Boolean) { //TESTING
         if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
 
-        val writer : BufferedWriter = if(!isWritingArchive)
-            Files.newBufferedWriter(Path.of("${Config.values?.proxyOutputPath}/proxies.csv"))
+        val outPath : Path = if(!isWritingArchive)
+            Path.of("${Config.values?.proxyOutputPath}/proxies.csv")
         else
-            Files.newBufferedWriter(Path.of("${Config.values?.proxyOutputPath}/archive/working-proxies-history.csv"))
+            Path.of("${Config.values?.proxyOutputPath}/archive/working-proxies-history.csv")
+
+        val writer = Files.newBufferedWriter(outPath)
         
         val format = CSVFormat.Builder.create()
         format.setHeader("SOCKS4", "SOCKS5", "HTTP", "HTTPS")

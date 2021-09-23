@@ -9,6 +9,7 @@ import spb.util.Config
 import spb.util.FileBuilder
 import spb.util.ProxiesTextToJson
 import java.net.URL
+import kotlin.system.exitProcess
 
 /**
  * @author Kai
@@ -24,10 +25,10 @@ class ProxyGrabber {
             println(e.message)
         }
     }
-    
+
     private fun request() {
         val apiProxiesJson = try { URL(Config.values?.proxyEndpointUrl).readText() } catch (e : Exception) {
-            println("Issue with connecting to proxyEndpointUrl from config.json:\n${e.message}") }
+            println("Issue with connecting to proxyEndpointUrl from config.json:\n${e.message}"); exitProcess(0) }
         val gitHubProxiesJson = try { URL(Config.values?.proxyEndpointGithubUrl).readText() } catch (e : Exception) {
             println("Issue with connecting to proxyEndpointGithubUrl from config.json:\n${e.message}") }
         val localProxiesJson = try { ProxiesTextToJson().convert() } catch (e : Exception) {

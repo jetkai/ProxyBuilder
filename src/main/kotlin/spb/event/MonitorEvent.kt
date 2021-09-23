@@ -22,7 +22,9 @@ class MonitorEvent : Event(90) { //Executes this Event every 90 minutes
             //Interrupt all threads on SPBExecutorService->proxyThreadFactory
             Main.SPBExecutorService.proxyThreadFactory.interruptAllThreads()
             //Sleep MT 60s
+            println("stopping threads")
             Thread.sleep(60000)
+            println("attempting to build file")
             try {
                 //Create files with verified proxies
                 val socks4 = FileBuilder.sortByIp(VerifiedProxies.socks4); val socks5 = FileBuilder.sortByIp(VerifiedProxies.socks5)
@@ -40,7 +42,7 @@ class MonitorEvent : Event(90) { //Executes this Event every 90 minutes
                 //Upload the files to GitHub using Git
                 GitActions().init()
             } catch (e : Exception) {
-                print(e.message)
+                e.printStackTrace()
             }
         }
     }
