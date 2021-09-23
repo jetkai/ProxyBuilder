@@ -12,7 +12,6 @@ import org.apache.commons.csv.CSVPrinter
 import spb.Constants
 import spb.net.proxy.ProxyData
 import spb.net.proxy.VerifiedProxies
-import java.io.BufferedWriter
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -198,21 +197,21 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
 
 
         if(!isWritingArchive) {
-            File("${Config.values?.proxyOutputPath}/proxies-socks4.txt").writeText(socks4Array.joinToString("\n"))
-            File("${Config.values?.proxyOutputPath}/proxies-socks5.txt").writeText(socks5Array.joinToString("\n"))
-            File("${Config.values?.proxyOutputPath}/proxies-socks4+5.txt").writeText((socks4Array + socks5Array).shuffled()
+            File("${Config.values?.proxyOutputPath}/proxies-socks4.txt").writeText(sortByIp(socks4Array).joinToString("\n"))
+            File("${Config.values?.proxyOutputPath}/proxies-socks5.txt").writeText(sortByIp(socks5Array).joinToString("\n"))
+            File("${Config.values?.proxyOutputPath}/proxies-socks4+5.txt").writeText(sortByIp(socks4Array + socks5Array)
                 .joinToString("\n"))
 
-            File("${Config.values?.proxyOutputPath}/proxies-http.txt").writeText(httpArray.joinToString("\n"))
-            File("${Config.values?.proxyOutputPath}/proxies-https.txt").writeText(httpsArray.joinToString("\n"))
-            File("${Config.values?.proxyOutputPath}/proxies-http+https.txt").writeText((httpArray + httpsArray).shuffled()
+            File("${Config.values?.proxyOutputPath}/proxies-http.txt").writeText(sortByIp(httpArray).joinToString("\n"))
+            File("${Config.values?.proxyOutputPath}/proxies-https.txt").writeText(sortByIp(httpsArray).joinToString("\n"))
+            File("${Config.values?.proxyOutputPath}/proxies-http+https.txt").writeText(sortByIp(httpArray + httpsArray)
                 .joinToString("\n"))
 
             //All Proxies
-            val allProxies = (socks4Array + socks5Array + httpArray + httpsArray).shuffled()
+            val allProxies = sortByIp(socks4Array + socks5Array + httpArray + httpsArray)
             File("${Config.values?.proxyOutputPath}/proxies.txt").writeText(allProxies.joinToString("\n"))
         } else {
-            val allProxies = (socks4Array + socks5Array + httpArray + httpsArray)
+            val allProxies = sortByIp(socks4Array + socks5Array + httpArray + httpsArray)
             File("${Config.values?.proxyOutputPath}/archive/working-proxies-history.txt").writeText(allProxies.joinToString("\n"))
         }
 
