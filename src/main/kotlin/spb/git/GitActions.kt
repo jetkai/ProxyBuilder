@@ -22,10 +22,19 @@ class GitActions { //TODO Change this, lot of test code that needs optimizing
         Thread.sleep(30000)
 
         Constants.STAGE = "RUNNING GIT"
-        Shell().executeShell(add); println("Committing.")
-        Shell().executeShell(commit); println("Pushing.")
-        Shell().executeShell(push); println("Releasing.")
-        Shell().executeShell(release); println("Done.")
+
+        Shell().executeShell(add)
+        when { Constants.DEBUG_MODE -> println("Committing.") }
+
+        Shell().executeShell(commit)
+        when { Constants.DEBUG_MODE -> println("Pushing.") }
+
+        Shell().executeShell(push)
+        when { Constants.DEBUG_MODE -> println("Releasing.") }
+
+        Shell().executeShell(release)
+        when { Constants.DEBUG_MODE -> println("Done.") }
+
         Constants.STAGE = "FINISHED"
 
         if(Constants.EXIT_UPON_COMPLETION)

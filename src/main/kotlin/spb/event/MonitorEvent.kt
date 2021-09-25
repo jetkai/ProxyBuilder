@@ -22,27 +22,40 @@ class MonitorEvent : Event(88) { //Executes this Event every 88 minutes
             //Interrupt all threads on SPBExecutorService->proxyThreadFactory
             Main.SPBExecutorService.proxyThreadFactory.interruptAllThreads()
             //Sleep MT 60s
-            println("stopping threads")
+            when {
+                Constants.DEBUG_MODE -> println("Stopping threads")
+            }
             Thread.sleep(60000)
-            println("attempting to build file")
-            try {
-                //Create files with verified proxies
-                val socks4 = FileBuilder.sortByIp(VerifiedProxies.socks4); val socks5 = FileBuilder.sortByIp(VerifiedProxies.socks5)
-                val http = FileBuilder.sortByIp(VerifiedProxies.http); val https = FileBuilder.sortByIp(VerifiedProxies.https)
-                FileBuilder.buildTxtFiles(socks4, socks5, http, https, false)
-                FileBuilder.buildJsonFiles(socks4, socks5, http, https, false)
-                FileBuilder.buildCsvFile(socks4, socks5, http, https, false)
-                FileBuilder.buildProxyArchive()
-                //Sleep MT 30s
-                Thread.sleep(30000)
-                //Update Readme file
-                FileBuilder.updateReadme()
-                //Sleep MT 30s
-                Thread.sleep(30000)
-                //Upload the files to GitHub using Git
-                GitActions().init()
-            } catch (e : Exception) {
-                e.printStackTrace()
+
+            var buildAttempt = 1
+
+            while (buildAttempt <= 3) {
+                when { Constants.DEBUG_MODE -> println("Attempting to build file, attempt: $buildAttempt") }
+                try {
+                    //Create files with verified proxies
+                    val socks4 = FileBuilder.sortByIp(VerifiedProxies.socks4);
+                    val socks5 = FileBuilder.sortByIp(VerifiedProxies.socks5)
+                    val http = FileBuilder.sortByIp(VerifiedProxies.http);
+                    val https = FileBuilder.sortByIp(VerifiedProxies.https)
+                    FileBuilder.buildTxtFiles(socks4, socks5, http, https, false)
+                    FileBuilder.buildJsonFiles(socks4, socks5, http, https, false)
+                    FileBuilder.buildCsvFile(socks4, socks5, http, https, false)
+                    FileBuilder.buildProxyArchive()
+                    //Sleep MT 30s
+                    Thread.sleep(30000)
+                    //Update Readme file
+                    when { Constants.DEBUG_MODE -> println("Attempting to build Readme") }
+                    FileBuilder.buildReadmeFile()
+                    //Sleep MT 30s
+                    Thread.sleep(30000)
+                    //Upload the files to GitHub using Git
+                    when { Constants.DEBUG_MODE -> println("Attempting to execute GitActions") }
+                    GitActions().init()
+                    break
+                } catch (e: Exception) {
+                    buildAttempt++
+                    when { Constants.DEBUG_MODE -> println("BUILDING ISSUE: \n${e.message} \n${e.stackTraceToString()}") }
+                }
             }
         }
     }

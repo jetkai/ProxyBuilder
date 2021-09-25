@@ -1,5 +1,6 @@
 package spb.util
 
+import spb.Constants
 import java.util.concurrent.ThreadFactory
 
 /**
@@ -14,7 +15,7 @@ class SPBThreadFactory (private val name : String) : ThreadFactory {
         val thread = Thread(r)
         threads.add(thread)
         thread.uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _: Thread?, _: Throwable? ->
-            println("[ALERT] ONE OF THE PROXY THREADS HAVE CRASHED")
+            when { Constants.DEBUG_MODE -> println("[ALERT] ONE OF THE PROXY THREADS HAVE CRASHED") }
         }
         return thread
     }

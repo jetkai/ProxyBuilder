@@ -97,9 +97,6 @@ class ProxyTester : Event(5) {
         }
     }
 
-    /**
-     *
-     */
     private fun useSocksProxy(serverAddress: String?, serverPort: Int): ClientSocket? {
         val proxy = Proxy(Proxy.Type.SOCKS, InetSocketAddress(proxyAddress, proxyPort))
         val socket = Socket(proxy)
@@ -143,7 +140,7 @@ class ProxyTester : Event(5) {
     }
 
     /**
-     * Requires JDK 1.8 {REFLECTION}
+     * Requires JDK 1.8 -> 15.02 {REFLECTION}
      */
     private fun forceSocks4(socket : Socket) {
         val setSockVersion : Method
@@ -167,9 +164,7 @@ class ProxyTester : Event(5) {
             "http" -> VerifiedProxies.http += formattedProxy
             "https" -> VerifiedProxies.https += formattedProxy
         }
-        /*FileBuilder.appendTxtFiles(formattedProxy, type)
-        FileBuilder.appendJsonFiles(formattedProxy, type)*/
-        println("Successfully connected to an RSPS with the Proxy $formattedProxy [${type.uppercase()}]")
+        when { Constants.DEBUG_MODE -> println("Successfully connected to an RSPS with the Proxy $formattedProxy [${type.uppercase()}]") }
     }
 
 }

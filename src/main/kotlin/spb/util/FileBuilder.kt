@@ -26,12 +26,11 @@ import java.util.*
 @ExperimentalSerializationApi
 object FileBuilder { //TODO - Complete rewrite this entire object file, re-write into class, clean-up & optimize
 
-    private val fileArray = arrayListOf("proxies-socks4.txt", "proxies-socks5.txt", "proxies-socks4+5.txt",
-        "proxies-http.txt", "proxies-https.txt", "proxies-http+https.txt", "proxies.txt",
-        "proxies-socks4+5.json", "proxies-socks4+5-beautify.json", "proxies-http+https.json",
-        "proxies-http+https-beautify.json", "proxies.json", "proxies-beautify.json")
-
     fun deleteOldProxyFiles() {
+        val fileArray = arrayListOf("proxies-socks4.txt", "proxies-socks5.txt", "proxies-socks4+5.txt",
+            "proxies-http.txt", "proxies-https.txt", "proxies-http+https.txt", "proxies.txt", "proxies.csv",
+            "proxies-socks4+5.json", "proxies-socks4+5-beautify.json", "proxies-http+https.json",
+            "proxies-http+https-beautify.json", "proxies.json", "proxies-beautify.json")
         fileArray.forEach { file -> File("${Config.values?.proxyOutputPath}/$file").deleteRecursively() }
     }
 
@@ -77,9 +76,8 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
     fun buildTxtFiles(
         socks4Array: List<String>, socks5Array: List<String>,
         httpArray: List<String>, httpsArray: List<String>,
-        isWritingArchive: Boolean
-    ) { //TESTING
-
+        isWritingArchive: Boolean) { //TESTING
+        if(Constants.STAGE.contains("GIT")) return
 
         if(!isWritingArchive) {
             File("${Config.values?.proxyOutputPath}/proxies-socks4.txt").writeText(socks4Array.joinToString("\n"))
@@ -106,8 +104,8 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
     @ExperimentalSerializationApi
     fun buildJsonFiles(
         socks4Array: List<String>, socks5Array: List<String>, httpArray: List<String>, httpsArray: List<String>,
-        isWritingArchive: Boolean,
-    ) { //TESTING
+        isWritingArchive: Boolean) { //TESTING
+        if(Constants.STAGE.contains("GIT")) return
 
         val rawJson = Json
         val prettyJson = Json { prettyPrint = true; encodeDefaults = true }
@@ -146,7 +144,7 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
         }
     }
 
-    fun updateReadme() {
+    fun buildReadmeFile() {
         val readmeFile = File("${Config.values?.proxyOutputPath}/README.md")
         val socks4File = File("${Config.values?.proxyOutputPath}/proxies-socks4.txt")
         val socks5File = File("${Config.values?.proxyOutputPath}/proxies-socks5.txt")
@@ -161,29 +159,50 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
             || !archiveFile.exists())
             return
 
+        val socks4Size = socks4File.readLines().size
+        val socks5Size = socks5File.readLines().size
+        val httpSize = httpFile.readLines().size
+        val httpsSize = httpsFile.readLines().size
+
         val readmeText = readmeFile.readText()
 
         val originalText = readmeText.substring(0, readmeText.indexOf("# [SAMPLE PROXIES]"))
-        var newText = "# [SAMPLE PROXIES] - ${SimpleDateFormat("[MMMM dd yyyy | hh:mm:ss]").format(Date())}\n\n"
+        var extraText = "# [SAMPLE PROXIES] - ${SimpleDateFormat("[MMMM dd yyyy | hh:mm:ss]").format(Date())}\n\n"
 
-        val totalProxiesCount = proxiesFile.readLines().size
+        val totalProxiesSize = (socks4Size + socks5Size + httpSize + httpsSize)
+        val uniqueTotalProxiesSize = proxiesFile.readLines().size
+        val uniqueTotalProxiesArchiveSize = archiveFile.readLines().size
         val gitHubLinkArray = Config.values?.proxyGithubList
 
+        val proxiesInfoText =
+            "### Proxy Statistics:\n" +
+                    "- _Online Proxies (By Protocol):_"
+                    "   - SOCKS4: $socks4Size\n" +
+                    "   - SOCKS5: $socks5Size\n" +
+                    "   - HTTP: $httpSize\n" +
+                    "   - HTTPS: $httpsSize\n" +
+                    "Total Online Proxies (SOCKS4/5 + HTTP/S): $totalProxiesSize\n" +
+                    "Unique Online Proxies: $uniqueTotalProxiesSize\n" +
+                    "Unique Online/Offline Proxies (Archive): $uniqueTotalProxiesArchiveSize\n"
+
+        //Append proxiesInfoText to extraText
+        extraText += proxiesInfoText
+
         val codeTextArray = arrayListOf(
-            arrayListOf("[SOCKS4 (${socks4File.readLines().size}/$totalProxiesCount)](${gitHubLinkArray?.get(0)})",
+            arrayListOf("[SOCKS4 ($socks4Size/$uniqueTotalProxiesSize)](${gitHubLinkArray?.get(0)})",
                 socks4File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("[SOCKS5 (${socks5File.readLines().size}/$totalProxiesCount)](${gitHubLinkArray?.get(1)})",
+            arrayListOf("[SOCKS5 ($socks5Size/$uniqueTotalProxiesSize)](${gitHubLinkArray?.get(1)})",
                 socks5File.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("[HTTP (${httpFile.readLines().size}/$totalProxiesCount)](${gitHubLinkArray?.get(2)})",
+            arrayListOf("[HTTP ($httpSize/$uniqueTotalProxiesSize)](${gitHubLinkArray?.get(2)})",
                 httpFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("[HTTPS (${httpsFile.readLines().size}/$totalProxiesCount)](${gitHubLinkArray?.get(3)})",
+            arrayListOf("[HTTPS ($httpsSize/$uniqueTotalProxiesSize)](${gitHubLinkArray?.get(3)})",
                 httpsFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")}),
-            arrayListOf("[ARCHIVE ($totalProxiesCount/${archiveFile.readLines().size})](${gitHubLinkArray?.get(4)})",
+            arrayListOf("[ARCHIVE ($uniqueTotalProxiesSize/$uniqueTotalProxiesArchiveSize)](${gitHubLinkArray?.get(4)})",
                 archiveFile.useLines { l: Sequence<String> -> l.take(30).toMutableList().joinToString(separator = "\n")})
         )
 
         for(codeText in codeTextArray) {
-            newText += ("## ${codeText[0]}"
+            extraText += ("## ${codeText[0]}"
                 .plus("\n")
                 .plus("```yaml")
                 .plus("\n")
@@ -194,8 +213,8 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
 
         readmeFile.writeText(
             originalText
-                .plus(newText)
-                .plus("\n\nThx Co Pure Gs - Sort miester! \uD83D\uDC9F")
+                .plus(extraText)
+                .plus("\n\nThx Co Pure Gs - Sort Meister! \uD83D\uDC9F")
         )
     }
 
@@ -245,81 +264,17 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
             try {
                 format = String.format("%3s.%3s.%3s.%3s", ip[0], ip[1], ip[2], ip[3])
             } catch (e : ArrayIndexOutOfBoundsException) {
-                println("Issue with: ${ip.joinToString()}")
+                when { Constants.DEBUG_MODE -> println("Issue with: ${ip.joinToString()}") }
             }
             val ip2 = o2.split(":")[0].split(".").toTypedArray()
             var format2 = ""
             try {
                 format2 = String.format("%3s.%3s.%3s.%3s", ip2[0], ip2[1], ip2[2], ip2[3])
             } catch (e : ArrayIndexOutOfBoundsException) {
-                println("Issue with: ${ip2.joinToString()}")
+                when { Constants.DEBUG_MODE -> println("Issue with: ${ip2.joinToString()}") }
             }
             format.compareTo(format2)
         }
-    }
-
-    /**
-     * Unused Code
-     */
-
-    private val socks4Array = arrayListOf<String>()
-    private val socks5Array = arrayListOf<String>()
-    private val httpArray = arrayListOf<String>()
-    private val httpsArray = arrayListOf<String>()
-
-    fun appendTxtFiles(proxy : String, type : String) { //TESTING {FOR TESTING}
-        if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
-
-        if(type == "socks4") File("${Config.values?.proxyOutputPath}/proxies-socks4.txt").appendText("$proxy\n")
-        if(type == "socks5") File("${Config.values?.proxyOutputPath}/proxies-socks5.txt").appendText("$proxy\n")
-        if(type.contains("socks")) File("${Config.values?.proxyOutputPath}/proxies-socks4+5.txt").appendText("$proxy\n")
-
-        if(type == "http") File("${Config.values?.proxyOutputPath}/proxies-http.txt").appendText("$proxy\n")
-        if(type == "https") File("${Config.values?.proxyOutputPath}/proxies-https.txt").appendText("$proxy\n")
-        if(type.contains("http")) File("${Config.values?.proxyOutputPath}/proxies-http+https.txt").appendText("$proxy\n")
-
-        //All Proxies
-        File("${Config.values?.proxyOutputPath}/proxies.txt").appendText("$proxy\n")
-    }
-
-    //TODO - Some errors here, need to sleep
-    @ExperimentalSerializationApi
-    fun appendJsonFiles(fProxy : String, type : String) { //TESTING
-        if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
-
-        if(type == "socks4") socks4Array += fProxy
-        if(type == "socks5") socks5Array += fProxy
-        if(type == "http") httpArray += fProxy
-        if(type == "https") httpsArray += fProxy
-
-        val rawJson = Json
-        val prettyJson = Json { prettyPrint = true; encodeDefaults = true }
-
-        val socksProxies = buildJsonObject {
-            putJsonArray("socks4") { for (proxy in socks4Array) add(proxy) }
-            putJsonArray("socks5") { for (proxy in socks5Array) add(proxy) }
-        }
-
-        val httpProxies = buildJsonObject {
-            putJsonArray("http") { for (proxy in httpArray) add(proxy) }
-            putJsonArray("https") { for (proxy in httpsArray) add(proxy) }
-        }
-
-        val allProxies = buildJsonObject {
-            putJsonArray("socks4") { for (proxy in socks4Array) add(proxy) }
-            putJsonArray("socks5") { for (proxy in socks5Array) add(proxy) }
-            putJsonArray("http") { for (proxy in httpArray) add(proxy) }
-            putJsonArray("https") { for (proxy in httpsArray) add(proxy) }
-        }
-
-        File("${Config.values?.proxyOutputPath}/proxies-socks4+5.json").writeText(rawJson.encodeToString(socksProxies))
-        File("${Config.values?.proxyOutputPath}/proxies-socks4+5-beautify.json").writeText(prettyJson.encodeToString(socksProxies))
-
-        File("${Config.values?.proxyOutputPath}/proxies-http+https.json").writeText(rawJson.encodeToString(httpProxies))
-        File("${Config.values?.proxyOutputPath}/proxies-http+https-beautify.json").writeText(prettyJson.encodeToString(httpProxies))
-
-        File("${Config.values?.proxyOutputPath}/proxies.json").writeText(rawJson.encodeToString(allProxies))
-        File("${Config.values?.proxyOutputPath}/proxies-beautify.json").writeText(prettyJson.encodeToString(allProxies))
     }
 
 }
