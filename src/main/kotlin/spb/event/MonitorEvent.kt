@@ -12,7 +12,7 @@ import spb.util.FileBuilder
  * @author Kai
  */
 @ExperimentalSerializationApi
-class MonitorEvent : Event(90) { //Executes this Event every 90 minutes
+class MonitorEvent : Event(88) { //Executes this Event every 88 minutes
 
     override fun run() {
         if(Constants.STAGE != "GRABBING_PROXIES" && !Constants.STAGE.contains("GIT"))
