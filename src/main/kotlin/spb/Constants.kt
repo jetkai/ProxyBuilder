@@ -11,7 +11,7 @@ object Constants {
 
     var STAGE = "STARTING"
 
-    const val THREADS = 2000 // TEST THREADS LIMIT
+    const val THREADS = 1000 // TEST THREADS LIMIT
 
     const val IS_USING_PROXY = true
     const val EXIT_UPON_COMPLETION = true

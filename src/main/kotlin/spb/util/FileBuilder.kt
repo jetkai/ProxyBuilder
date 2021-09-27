@@ -250,7 +250,7 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
         val socks4 = sortByIp(proxyArchive.socks4.plus(socks4Array).distinct())
         val socks5 = sortByIp(proxyArchive.socks5.plus(socks5Array).distinct())
         val http = sortByIp(proxyArchive.http.plus(httpArray).distinct())
-        val https = sortByIp(proxyArchive.https.plus(httpsArray).distinct()) //Test Sorting
+        val https = sortByIp(proxyArchive.https.plus(httpsArray).distinct())
 
         /**
          * WRITE CSV

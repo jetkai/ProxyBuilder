@@ -28,9 +28,9 @@ fun testConnect() {
     val proxyTester = ProxyTester()
     val socksProxy = arrayListOf<Any>("24.249.199.4", 4145, "socks5")
     val httpsProxy = arrayListOf<Any>("1.20.99.122", 8080, "socks5")
-    proxyTester.proxyAddress = httpsProxy[0].toString()
-    proxyTester.proxyPort = httpsProxy[1].toString().toInt()
-    proxyTester.type = httpsProxy[2].toString()
+    proxyTester.proxyAddress = socksProxy[0].toString()
+    proxyTester.proxyPort = socksProxy[1].toString().toInt()
+    proxyTester.type = socksProxy[2].toString()
     proxyTester.run()
 }
 

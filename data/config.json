@@ -1,19 +1,19 @@
 {
   "proxyOutputPath": "data/proxies/output",
 
-  "victimTestServerIp": "127.0.0.1",
-  "victimTestServerPort": "43594",
-  "victimBackupServerIp": "127.1.1.1",
-  "victimBackupServerPort": "43594",
+  "victimTestServerIp": ["127.0.0.1", "127.1.1.1", "127.1.1.2"],
+  "victimTestServerPort": [43594, 43596, 43594],
 
   "proxyEndpointUrl": "<ENTER YOUR ENDPOINT-URL HERE>",
-  "proxyEndpointGithubUrl": "https://raw.githubusercontent.com/jetkai/proxy-list/main/proxies.json",
+  "proxyEndpointGithubUrl":"https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/json/proxies.json",
 
-  "proxyGithubList": [
-    "https://raw.githubusercontent.com/jetkai/proxy-list/main/proxies-socks4.txt",
-    "https://raw.githubusercontent.com/jetkai/proxy-list/main/proxies-socks5.txt",
-    "https://raw.githubusercontent.com/jetkai/proxy-list/main/proxies-http.txt",
-    "https://raw.githubusercontent.com/jetkai/proxy-list/main/proxies-https.txt",
-    "https://raw.githubusercontent.com/jetkai/proxy-list/main/archive/working-proxies-history.json"
-  ]
+  "proxyGithubList":[
+    "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks4.txt",
+    "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-socks5.txt",
+    "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-http.txt",
+    "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/txt/proxies-https.txt",
+    "https://raw.githubusercontent.com/jetkai/proxy-list/main/archive/txt/working-proxies-history.txt"
+  ],
+
+  "localDatabasePath":"data/proxies/localdb_proxies.json"
 }

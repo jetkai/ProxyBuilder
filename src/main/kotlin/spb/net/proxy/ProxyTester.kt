@@ -162,6 +162,10 @@ class ProxyTester : Event(5) {
     private fun connected() {
         this.connected = true
         this.isRunning = false
+
+        val serverAddress = Config.values?.victimTestServerIp?.get(attempt - 1)
+        val serverPort = Config.values?.victimTestServerPort?.get(attempt - 1)
+
         when (type) {
             "socks4" -> VerifiedProxies.socks4 += formattedProxy
             "socks5" -> VerifiedProxies.socks5 += formattedProxy
@@ -169,7 +173,8 @@ class ProxyTester : Event(5) {
             "https" -> VerifiedProxies.https += formattedProxy
         }
         when { Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE ->
-            println("Successfully connected to an RSPS with the Proxy $formattedProxy [${type.uppercase()}]")
+            println("Successfully connected to an RSPS ($serverAddress:$serverPort), " +
+                    "with the Proxy $formattedProxy [${type.uppercase()}]")
         }
     }
 
