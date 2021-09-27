@@ -4,7 +4,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import spb.Constants
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.system.exitProcess
 
 /**
  * @author Kai
@@ -24,21 +23,19 @@ class GitActions { //TODO Change this, lot of test code that needs optimizing
         Constants.STAGE = "RUNNING GIT"
 
         Shell().executeShell(add)
+
         when { Constants.DEBUG_MODE -> println("Committing.") }
-
         Shell().executeShell(commit)
+
         when { Constants.DEBUG_MODE -> println("Pushing.") }
-
         Shell().executeShell(push)
-        when { Constants.DEBUG_MODE -> println("Releasing.") }
 
-        Shell().executeShell(release)
+        /*when { Constants.DEBUG_MODE -> println("Releasing.") }
+        Shell().executeShell(release)*/
+
         when { Constants.DEBUG_MODE -> println("Done.") }
 
         Constants.STAGE = "FINISHED"
-
-        if(Constants.EXIT_UPON_COMPLETION)
-            exitProcess(0) //Exit if not leaving running
     }
 
 }

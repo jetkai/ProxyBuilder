@@ -1,11 +1,13 @@
 package spb.util
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import spb.Constants
 import java.util.concurrent.ThreadFactory
 
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 class SPBThreadFactory (private val name : String) : ThreadFactory {
 
     private val threads: MutableList<Thread> = ArrayList()

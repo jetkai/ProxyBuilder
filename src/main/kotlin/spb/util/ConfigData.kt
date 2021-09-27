@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 class ConfigData(
-    val proxyOutputPath : String, val victimTestServerIp : String, val victimTestServerPort : Int,
-    val victimBackupServerIp : String, val victimBackupServerPort : Int, val proxyEndpointUrl : String,
-    val proxyEndpointGithubUrl : String, val proxyGithubList : Array<String>
+    val proxyOutputPath : String, val victimTestServerIp : Array<String>, val victimTestServerPort : IntArray,
+    val proxyEndpointUrl : String, val proxyEndpointGithubUrl : String, val proxyGithubList : Array<String>,
+    val localDatabasePath : String
 )

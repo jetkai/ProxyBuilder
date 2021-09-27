@@ -32,7 +32,7 @@ class ProxyTester : Event(5) {
     var socks4 = false
 
     override fun run() {
-        if(connected || attempt >= 2) this.isRunning = false
+        if(connected || attempt >= 3) this.isRunning = false
         if(!started) init()
     }
 
@@ -43,7 +43,8 @@ class ProxyTester : Event(5) {
             try {
                 connectRS()
             } catch (e : Exception) {
-                println(e.message)
+                if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
+                    println(e.stackTraceToString())
             }
         else
             println("Proxy is empty.")
@@ -55,8 +56,8 @@ class ProxyTester : Event(5) {
      * Returns responseCode 0 if successful, -1 if unsuccessful
      */
     private fun connectRS() {
-        val serverAddress = if(attempt > 1) Config.values?.victimBackupServerIp else Config.values?.victimTestServerIp
-        val serverPort = if(attempt > 1) Config.values?.victimBackupServerPort else Config.values?.victimTestServerPort
+        val serverAddress = Config.values?.victimTestServerIp?.get(attempt - 1)
+        val serverPort = Config.values?.victimTestServerPort?.get(attempt - 1)
         val clientSocket = if (Constants.IS_USING_PROXY && type.contains("socks"))
             useSocksProxy(serverAddress, serverPort!!.toInt())
         else if(Constants.IS_USING_PROXY && type.contains("http"))
@@ -66,9 +67,9 @@ class ProxyTester : Event(5) {
         )
 
         if(clientSocket == null) {
-            if(Constants.DEBUG_MODE)
-                println("Failed to connect to Proxy $formattedProxy")
-            if(attempt == 1)
+            if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
+                println("Failed to connect to Proxy $formattedProxy | Endpoint: $serverAddress:$serverPort | Attempt: $attempt")
+            if(attempt < 3)
                 init() //Restarts for second attempt on secondary test server
             return
         }
@@ -90,9 +91,9 @@ class ProxyTester : Event(5) {
         if(responseCode == 0)
             connected()
         else {
-            if(Constants.DEBUG_MODE)
-                println("Connected to Proxy successfully, but failed to connect to RSPS with Proxy $formattedProxy [${type.uppercase()}]")
-            if(attempt == 1)
+            if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
+                println("Connected to Proxy successfully, but failed to connect to RSPS ($serverAddress:$serverPort) with Proxy $formattedProxy [${type.uppercase()}]")
+            if(attempt < 3)
                 init() //Restarts for second attempt on secondary test server
         }
     }
@@ -105,7 +106,7 @@ class ProxyTester : Event(5) {
         try {
             socket.soTimeout = 3000
             socket.tcpNoDelay = true
-            socket.connect(InetSocketAddress(serverAddress, serverPort))
+            socket.connect(InetSocketAddress(serverAddress, serverPort), 3000)
         } catch (e : IOException) {
             socket.close()
         }
@@ -126,12 +127,15 @@ class ProxyTester : Event(5) {
             outStream.flush()
             if(Constants.DEBUG_MODE) {
                 val inStream = BufferedReader(InputStreamReader(socket.getInputStream()))
-                //Good Response = "HTTP/1.0 200 {OK/Connection established}" or "HTTP/1.1 200 {OK/Connection established}"
-                println(inStream.readLine())
+                //Good Response = "HTTP/1.0 200 {OK/Connection established}" or "HTTP/1.1 200 {OK/Connection established}
+                val response = inStream.readLine()
+                if(Constants.DISPLAY_CONNECTION_MESSAGE)
+                    println(response)
             }
         } catch (e : IOException) {
             //Bad Response = "Connection reset", "Read timed out", "null"
-            if(Constants.DEBUG_MODE) println(e.message)
+            if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
+                println(e.message)
             socket.close()
         }
         if(socket.isClosed)
@@ -164,7 +168,9 @@ class ProxyTester : Event(5) {
             "http" -> VerifiedProxies.http += formattedProxy
             "https" -> VerifiedProxies.https += formattedProxy
         }
-        when { Constants.DEBUG_MODE -> println("Successfully connected to an RSPS with the Proxy $formattedProxy [${type.uppercase()}]") }
+        when { Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE ->
+            println("Successfully connected to an RSPS with the Proxy $formattedProxy [${type.uppercase()}]")
+        }
     }
 
 }

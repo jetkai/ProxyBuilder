@@ -1,5 +1,6 @@
 package spb.util
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import spb.Constants
 import spb.event.Event
 import java.util.concurrent.Executors
@@ -8,9 +9,10 @@ import java.util.concurrent.TimeUnit
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 class SPBExecutorService {
 
-    val proxyThreadFactory = SPBThreadFactory("ProxyExecutor")
+    private val proxyThreadFactory = SPBThreadFactory("ProxyExecutor")
 
     private val proxyExecutor = Executors.newFixedThreadPool(Constants.THREADS, proxyThreadFactory)
     private val monitorExecutor = Executors.newSingleThreadScheduledExecutor(SPBThreadFactory("MonitorExecutor"))
@@ -27,6 +29,11 @@ class SPBExecutorService {
             if (event.isRunning)
                 event.run()
         }, 0, event.timeToExecute.toLong(), TimeUnit.MINUTES)
+    }
+
+    fun stop() {
+        proxyThreadFactory.interruptAllThreads()
+        proxyExecutor.shutdown()
     }
 
 }

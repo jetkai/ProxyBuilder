@@ -30,7 +30,7 @@ class ClientSocket : Runnable {
 
         socket = initSocket
 
-        socket!!.soTimeout = 5000
+        socket!!.soTimeout = 3000
         socket!!.tcpNoDelay = true
 
         inputStream = socket!!.getInputStream()
