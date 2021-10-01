@@ -1,5 +1,6 @@
 package spb.net.rs
 
+import spb.Constants
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -30,7 +31,7 @@ class ClientSocket : Runnable {
 
         socket = initSocket
 
-        socket!!.soTimeout = 3000
+        socket!!.soTimeout = Constants.CONNECTION_TIMEOUT
         socket!!.tcpNoDelay = true
 
         inputStream = socket!!.getInputStream()

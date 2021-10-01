@@ -18,19 +18,18 @@ import java.util.zip.ZipFile
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 class ProxySorter {
 
     private val proxyDataArray = arrayListOf<ProxySorterData>()
 
     companion object {
-        @ExperimentalSerializationApi
         @JvmStatic
         fun main(args : Array<String>) {
             ProxySorter().search()
         }
     }
 
-    @ExperimentalSerializationApi
     fun search() {
         val rootDir = "data/proxies/compressed/"
         for(file in File(rootDir).list()!!) {
@@ -41,7 +40,6 @@ class ProxySorter {
         println("finished")
     }
 
-    @ExperimentalSerializationApi
     @Throws(IOException::class)
     private fun readZipStream(zipFile : ZipFile) {
 
@@ -55,7 +53,6 @@ class ProxySorter {
         }
     }
 
-    @ExperimentalSerializationApi
     private fun addToArray(fileName : String, contentsIn: InputStream) {
         var proxyData = ProxySorterData(arrayOf(), arrayOf(), arrayOf(), arrayOf(), 0L)
         val proxyDataJson = contentsIn.bufferedReader().use { it.readText() }
@@ -96,7 +93,6 @@ class ProxySorter {
 
     }
 
-    @ExperimentalSerializationApi
     private fun writeToFile(proxies : ProxySorterData) {
         val json = Json {
             this.prettyPrint = true

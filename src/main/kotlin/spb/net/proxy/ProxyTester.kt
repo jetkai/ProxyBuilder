@@ -32,7 +32,7 @@ class ProxyTester : Event(5) {
     var socks4 = false
 
     override fun run() {
-        if(connected || attempt >= 3) this.isRunning = false
+        if(connected || attempt >= Config.values?.victimTestServerIp?.size!!) this.isRunning = false
         if(!started) init()
     }
 
@@ -69,7 +69,7 @@ class ProxyTester : Event(5) {
         if(clientSocket == null) {
             if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
                 println("Failed to connect to Proxy $formattedProxy | Endpoint: $serverAddress:$serverPort | Attempt: $attempt")
-            if(attempt < 3)
+            if(attempt < Config.values?.victimTestServerIp?.size!!)
                 init() //Restarts for second attempt on secondary test server
             return
         }
@@ -93,7 +93,7 @@ class ProxyTester : Event(5) {
         else {
             if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
                 println("Connected to Proxy successfully, but failed to connect to RSPS ($serverAddress:$serverPort) with Proxy $formattedProxy [${type.uppercase()}]")
-            if(attempt < 3)
+            if(attempt < Config.values?.victimTestServerIp?.size!!)
                 init() //Restarts for second attempt on secondary test server
         }
     }
@@ -104,9 +104,9 @@ class ProxyTester : Event(5) {
         if(socks4)
             forceSocks4(socket)
         try {
-            socket.soTimeout = 3000
+            socket.soTimeout = Constants.CONNECTION_TIMEOUT
             socket.tcpNoDelay = true
-            socket.connect(InetSocketAddress(serverAddress, serverPort), 3000)
+            socket.connect(InetSocketAddress(serverAddress, serverPort), Constants.CONNECTION_TIMEOUT)
         } catch (e : IOException) {
             socket.close()
         }
@@ -121,7 +121,7 @@ class ProxyTester : Event(5) {
         val iNet2 = iNet as InetSocketAddress
         val socket = Socket(iNet2.hostName, iNet2.port)
         try {
-            socket.soTimeout = 3000
+            socket.soTimeout = Constants.CONNECTION_TIMEOUT
             val outStream: OutputStream = socket.getOutputStream()
             outStream.write(("CONNECT $serverAddress:$serverPort HTTP/1.0\n\n").byteInputStream(StandardCharsets.ISO_8859_1).readBytes())
             outStream.flush()
@@ -175,6 +175,11 @@ class ProxyTester : Event(5) {
         when { Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE ->
             println("Successfully connected to an RSPS ($serverAddress:$serverPort), " +
                     "with the Proxy $formattedProxy [${type.uppercase()}]")
+
+            /**
+             *             println("SOCKS4[${VerifiedProxies.socks4.size}], SOCKS5[${VerifiedProxies.socks5.size}], " +
+            "HTTP[${VerifiedProxies.http.size}], HTTPS[${VerifiedProxies.https.size}]")
+             */
         }
     }
 

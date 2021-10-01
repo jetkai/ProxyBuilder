@@ -10,9 +10,9 @@ import java.io.File
 /**
  * @author Kai
  */
+@ExperimentalSerializationApi
 class ProxiesTextToJson {
 
-    @ExperimentalSerializationApi
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -25,7 +25,6 @@ class ProxiesTextToJson {
      * 123.123.123.123:80
      * 123.123.123.124:4145
      */
-    @ExperimentalSerializationApi
     fun convert() : String {
         val proxies = ProxyData(arrayOf(), arrayOf(), arrayOf(), arrayOf())
 
@@ -63,5 +62,7 @@ class ProxiesTextToJson {
         File("${Constants.PROXY_BUILDER_DATA_LOCATION}/data/proxies/proxies.json").writeText(finalJson) //Write Json if needed
         return finalJson
     }
+
+    val readText = File("${Constants.PROXY_BUILDER_DATA_LOCATION}/data/proxies/proxies.json").readText()
 
 }

@@ -7,7 +7,6 @@ import spb.git.GitActions
 import spb.net.proxy.ProxyGrabber
 import spb.net.proxy.VerifiedProxies
 import spb.util.FileBuilder
-import java.util.concurrent.Future
 import kotlin.system.exitProcess
 
 
