@@ -22,7 +22,7 @@ tasks.withType<Jar> {
     from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)
     from({ configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) } })
-    application { mainClassName = "spb.Main"}
+    application { mainClass.set("spb.Main") }
 }
 
 tasks {
@@ -38,7 +38,7 @@ tasks.jar {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
     implementation ("org.apache.commons:commons-csv:1.9.0")
     testImplementation(kotlin("test"))
 }
@@ -47,10 +47,10 @@ tasks.test {
     useJUnit()
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
 }
 
 application {
-    mainClassName = "Main"
+    mainClass.set("Main")
 }

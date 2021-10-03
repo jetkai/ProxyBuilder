@@ -32,18 +32,24 @@ class ProxyTester : Event(5) {
     var socks4 = false
 
     override fun run() {
-        if(connected || attempt >= Config.values?.victimTestServerIp?.size!!) this.isRunning = false
         if(!started) init()
     }
 
     private fun init() {
+        if(connected || attempt >= Config.values?.victimTestServerIp?.size!!) {
+            this.isRunning = false
+            return
+        }
         attempt++
         formattedProxy = "$proxyAddress:$proxyPort"
         if(proxyAddress.isNotEmpty() && proxyPort > 0)
             try {
                 connectRS()
+            } catch (c : ConnectException) {
+                if(Constants.DISPLAY_FAILED_CONNECTION_MESSAGE)
+                    println("Failed to connect to Proxy $formattedProxy | NO CONNECTION ESTABLISHED | Attempt: $attempt")
             } catch (e : Exception) {
-                if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
+                if(Constants.DISPLAY_FAILED_CONNECTION_MESSAGE)
                     println(e.stackTraceToString())
             }
         else
@@ -67,7 +73,7 @@ class ProxyTester : Event(5) {
         )
 
         if(clientSocket == null) {
-            if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
+            if(Constants.DISPLAY_FAILED_CONNECTION_MESSAGE)
                 println("Failed to connect to Proxy $formattedProxy | Endpoint: $serverAddress:$serverPort | Attempt: $attempt")
             if(attempt < Config.values?.victimTestServerIp?.size!!)
                 init() //Restarts for second attempt on secondary test server
@@ -91,8 +97,8 @@ class ProxyTester : Event(5) {
         if(responseCode == 0)
             connected()
         else {
-            if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
-                println("Connected to Proxy successfully, but failed to connect to RSPS ($serverAddress:$serverPort) with Proxy $formattedProxy [${type.uppercase()}]")
+            if(Constants.DISPLAY_FAILED_CONNECTION_MESSAGE)
+                println("Connected to Proxy successfully, but failed to connect to RSPS ($serverAddress:$serverPort) with Proxy $formattedProxy [${type.uppercase()}] | Attempt: $attempt")
             if(attempt < Config.values?.victimTestServerIp?.size!!)
                 init() //Restarts for second attempt on secondary test server
         }
@@ -129,12 +135,15 @@ class ProxyTester : Event(5) {
                 val inStream = BufferedReader(InputStreamReader(socket.getInputStream()))
                 //Good Response = "HTTP/1.0 200 {OK/Connection established}" or "HTTP/1.1 200 {OK/Connection established}
                 val response = inStream.readLine()
-                if(Constants.DISPLAY_CONNECTION_MESSAGE)
+                if(Constants.DISPLAY_SUCCESS_CONNECTION_MESSAGE)
                     println(response)
             }
+        } catch (c : ConnectException) {
+            if(Constants.DISPLAY_FAILED_CONNECTION_MESSAGE)
+                println("Unable to connect, timeout")
         } catch (e : IOException) {
             //Bad Response = "Connection reset", "Read timed out", "null"
-            if(Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE)
+            if(Constants.DISPLAY_FAILED_CONNECTION_MESSAGE)
                 println(e.message)
             socket.close()
         }
@@ -172,14 +181,13 @@ class ProxyTester : Event(5) {
             "http" -> VerifiedProxies.http += formattedProxy
             "https" -> VerifiedProxies.https += formattedProxy
         }
-        when { Constants.DEBUG_MODE && Constants.DISPLAY_CONNECTION_MESSAGE ->
+        when { Constants.DISPLAY_SUCCESS_CONNECTION_MESSAGE ->
             println("Successfully connected to an RSPS ($serverAddress:$serverPort), " +
                     "with the Proxy $formattedProxy [${type.uppercase()}]")
 
-            /**
-             *             println("SOCKS4[${VerifiedProxies.socks4.size}], SOCKS5[${VerifiedProxies.socks5.size}], " +
-            "HTTP[${VerifiedProxies.http.size}], HTTPS[${VerifiedProxies.https.size}]")
-             */
+       /*                  println("SOCKS4[${VerifiedProxies.socks4.size}], SOCKS5[${VerifiedProxies.socks5.size}], " +
+            "HTTP[${VerifiedProxies.http.size}], HTTPS[${VerifiedProxies.https.size}]")*/
+
         }
     }
 

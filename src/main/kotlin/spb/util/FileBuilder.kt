@@ -25,13 +25,12 @@ import java.util.*
 @ExperimentalSerializationApi
 object FileBuilder { //TODO - Complete rewrite this entire object file, re-write into class, clean-up & optimize
 
-
     @ExperimentalSerializationApi
     fun buildCsvFile(
         socks4Array: List<String>, socks5Array: List<String>,
         httpArray: List<String>, httpsArray: List<String>,
-        isWritingArchive: Boolean,
-    ) { //TESTING
+        isWritingArchive: Boolean) {
+
         if (Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
         try {
             val outPath: Path = if (!isWritingArchive)
@@ -71,19 +70,18 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
             csvPrinter.flush()
             csvPrinter.close()
         } catch (e : Exception) {
-            e.printStackTrace()
+            println(e.stackTraceToString())
         }
     }
 
     fun buildTxtFiles(
         socks4Array: List<String>, socks5Array: List<String>,
         httpArray: List<String>, httpsArray: List<String>,
-        isWritingArchive: Boolean,
-    ) { //TESTING
+        isWritingArchive: Boolean) {
+
         if(Constants.STAGE.contains("GIT")) return
 
         try {
-
             if (!isWritingArchive) {
                 File("${Config.values?.proxyOutputPath}/online-proxies/txt/proxies-socks4.txt").writeText(socks4Array.joinToString("\n"))
                 File("${Config.values?.proxyOutputPath}/online-proxies/txt/proxies-socks5.txt").writeText(socks5Array.joinToString("\n"))
@@ -105,36 +103,36 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
                     "\n"))
             }
         } catch (e : Exception) {
-            e.printStackTrace()
+            println(e.stackTraceToString())
         }
     }
 
-    //TODO - Some errors here, need to sleep
     @ExperimentalSerializationApi
     fun buildJsonFiles(
-        socks4Array: List<String>, socks5Array: List<String>, httpArray: List<String>, httpsArray: List<String>,
-        isWritingArchive: Boolean,
-    ) { //TESTING
+        socks4Array: List<String>, socks5Array: List<String>,
+        httpArray: List<String>, httpsArray: List<String>,
+        isWritingArchive: Boolean) {
+
         if(Constants.STAGE.contains("GIT")) return
 
         val rawJson = Json
         val prettyJson = Json { prettyPrint = true; encodeDefaults = true }
 
         val socksProxies = buildJsonObject {
-            putJsonArray("socks4") { for (proxy in socks4Array) add(proxy) }
-            putJsonArray("socks5") { for (proxy in socks5Array) add(proxy) }
+            putJsonArray("socks4") { socks4Array.forEach { proxy -> add(proxy) } }
+            putJsonArray("socks5") { socks5Array.forEach { proxy -> add(proxy) } }
         }
 
         val httpProxies = buildJsonObject {
-            putJsonArray("http") { for (proxy in httpArray) add(proxy) }
-            putJsonArray("https") { for (proxy in httpsArray) add(proxy) }
+            putJsonArray("http") { httpArray.forEach { proxy -> add(proxy) } }
+            putJsonArray("https") { httpsArray.forEach { proxy -> add(proxy) } }
         }
 
         val allProxies = buildJsonObject {
-            putJsonArray("socks4") { for (proxy in socks4Array) add(proxy) }
-            putJsonArray("socks5") { for (proxy in socks5Array) add(proxy) }
-            putJsonArray("http") { for (proxy in httpArray) add(proxy) }
-            putJsonArray("https") { for (proxy in httpsArray) add(proxy) }
+            putJsonArray("socks4") { socks4Array.forEach { proxy -> add(proxy) } }
+            putJsonArray("socks5") { socks5Array.forEach { proxy -> add(proxy) } }
+            putJsonArray("http") { httpArray.forEach { proxy -> add(proxy) } }
+            putJsonArray("https") { httpsArray.forEach { proxy -> add(proxy) } }
         }
 
         if(!isWritingArchive) {
@@ -232,8 +230,8 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
     @ExperimentalSerializationApi
     fun buildProxyArchive(
         socks4Array: List<String>, socks5Array: List<String>,
-        httpArray: List<String>, httpsArray: List<String>,
-    ) { //TESTING
+        httpArray: List<String>, httpsArray: List<String>) {
+
         if(Constants.STAGE.contains("GIT")) return //Prevents writing to the file when uploading to GIT
 
         val proxyArchiveUrl = "https://github.com/jetkai/proxy-list/raw/main/archive/json/working-proxies-history.json"
@@ -247,10 +245,21 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
             proxyArchive = json.decodeFromString<Array<ProxyData>>("[$proxyArchiveJson]").associateBy{ it }.keys.toMutableList()[0]
         } catch (i : Exception) { }
 
-        val socks4 = sortByIp(proxyArchive.socks4.plus(socks4Array).distinct())
-        val socks5 = sortByIp(proxyArchive.socks5.plus(socks5Array).distinct())
-        val http = sortByIp(proxyArchive.http.plus(httpArray).distinct())
-        val https = sortByIp(proxyArchive.https.plus(httpsArray).distinct())
+        println("(Compare Archive) START: SOCKS4[${proxyArchive.socks4.size}], SOCKS5[${proxyArchive.socks5.size}], " +
+                "HTTP[${proxyArchive.http.size}], HTTPS[${proxyArchive.https.size}]")
+
+        val combinedSocks4 = proxyArchive.socks4.plus(socks4Array).distinct()
+        val combinedSocks5 = proxyArchive.socks5.plus(socks5Array).distinct()
+        val combinedHttp = proxyArchive.http.plus(httpArray).distinct()
+        val combinedHttps = proxyArchive.https.plus(httpsArray).distinct()
+
+        val socks4 = sortByIp(combinedSocks4)
+        val socks5 = sortByIp(combinedSocks5)
+        val http = sortByIp(combinedHttp)
+        val https = sortByIp(combinedHttps)
+
+        println("(Compare Archive) END: SOCKS4[${socks4.size}], SOCKS5[${socks5.size}], " +
+                "HTTP[${http.size}], HTTPS[${https.size}]")
 
         /**
          * WRITE CSV
@@ -271,12 +280,12 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
         buildTxtFiles(socks4, socks5, http, https, true)
     }
 
-    fun sortByIp(proxyArray : List<String>): List<String> {
+    fun sortByIp(proxyArray : List<String>) : List<String> {
         val ipComparator: Comparator<String> = Comparator { ip1, ip2 -> toNumeric(ip1).compareTo(toNumeric(ip2)) }
         return proxyArray.sortedWith(ipComparator)
     }
 
-    private fun toNumeric(ip: String): Long {
+    fun toNumeric(ip: String) : Long {
         var finalIp = ip
         if (finalIp.contains(":"))
             finalIp = finalIp.split(":")[0]
@@ -284,34 +293,5 @@ object FileBuilder { //TODO - Complete rewrite this entire object file, re-write
         return ((finalIpArray[0].toLong() shl 24) + (finalIpArray[1].toLong() shl 16) + (finalIpArray[2].toLong() shl 8)
                 + finalIpArray[3].toLong())
     }
-
-    /*   fun sortByIp(proxyArray : List<String>): List<String> {
-        return proxyArray.sortedWith { o1, o2 ->
-            val ip = o1.split(":")[0].split(".").toTypedArray()
-            var format = ""
-            try {
-                format = String.format("%3s.%3s.%3s.%3s", ip[0], ip[1], ip[2], ip[3])
-            } catch (e : ArrayIndexOutOfBoundsException) {
-                when { Constants.DEBUG_MODE -> println("Issue with: ${ip.joinToString()}") }
-            }
-            val ip2 = o2.split(":")[0].split(".").toTypedArray()
-            var format2 = ""
-            try {
-                format2 = String.format("%3s.%3s.%3s.%3s", ip2[0], ip2[1], ip2[2], ip2[3])
-            } catch (e : ArrayIndexOutOfBoundsException) {
-                when { Constants.DEBUG_MODE -> println("Issue with: ${ip2.joinToString()}") }
-            }
-            format.compareTo(format2)
-        }
-    }
-*/
-
-/*    fun deleteOldProxyFiles() {
-        val fileArray = arrayListOf("proxies-socks4.txt", "proxies-socks5.txt", "proxies-socks4+5.txt",
-            "proxies-http.txt", "proxies-https.txt", "proxies-http+https.txt", "proxies.txt", "proxies.csv",
-            "proxies-socks4+5.json", "proxies-socks4+5-beautify.json", "proxies-http+https.json",
-            "proxies-http+https-beautify.json", "proxies.json", "proxies-beautify.json")
-        fileArray.forEach { file -> File("${Config.values?.proxyOutputPath}/$file").deleteRecursively() }
-    }*/
 
 }

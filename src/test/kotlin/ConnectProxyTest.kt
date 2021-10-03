@@ -18,7 +18,7 @@ class ConnectProxyTest {
 
     fun setConstants() {
         Constants.DEBUG_MODE = true
-        Constants.DISPLAY_CONNECTION_MESSAGE = true
+        Constants.DISPLAY_SUCCESS_CONNECTION_MESSAGE = true
         Constants.IS_PROXY_BUILDER_USER = true
     }
 
